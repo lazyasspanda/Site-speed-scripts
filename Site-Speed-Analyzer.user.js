@@ -12,8 +12,8 @@
 // @grant        GM_openInTab
 // @homepageURL  https://github.com/lazyasspanda/Site-speed-scripts
 // @connect      raw.githubusercontent.com
-// @updateURL    https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.js
-// @downloadURL  https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.js
+// @updateURL    https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js
+// @downloadURL  https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js
 // ==/UserScript==
 
 (function () {
@@ -44,7 +44,7 @@
 // ============================================================================
 function checkForScriptUpdates() {
   const currentVersion = '5.3'; // Match your @version
-  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.js';
+  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
   const downloadUrl = versionUrl;
   
   const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
@@ -146,7 +146,7 @@ function checkForScriptUpdates() {
 // ============================================================================
 function checkForScriptUpdates() {
   const currentVersion = '5.3'; // Match your @version
-  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.js';
+  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
   const downloadUrl = versionUrl;
   
   const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
@@ -4340,7 +4340,7 @@ function createToolbar() {
   if (checkUpdatesBtn) {
     checkUpdatesBtn.addEventListener('click', () => {
       const currentVersion = '5.3'; // Match your @version
-      const downloadUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
+      const downloadUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
       
       // If button is in "Update Available" state, open download link
       if (checkUpdatesBtn.getAttribute('data-update-ready') === 'true') {
