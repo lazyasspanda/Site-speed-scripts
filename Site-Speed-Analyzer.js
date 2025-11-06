@@ -10,10 +10,10 @@
 // @grant        GM_notification
 // @grant        GM_xmlhttpRequest
 // @grant        GM_openInTab
-// @homepageURL  https://github.com/lazyasspanda/validation-scripts
+// @homepageURL  https://github.com/lazyasspanda/Site-speed-scripts
 // @connect      raw.githubusercontent.com
-// @updateURL    https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer
-// @downloadURL  https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer
+// @updateURL    https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.js
+// @downloadURL  https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.js
 // ==/UserScript==
 
 (function () {
@@ -44,7 +44,7 @@
 // ============================================================================
 function checkForScriptUpdates() {
   const currentVersion = '5.3'; // Match your @version
-  const versionUrl = 'https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
+  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.js';
   const downloadUrl = versionUrl;
   
   const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
@@ -146,7 +146,7 @@ function checkForScriptUpdates() {
 // ============================================================================
 function checkForScriptUpdates() {
   const currentVersion = '5.3'; // Match your @version
-  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
+  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.js';
   const downloadUrl = versionUrl;
   
   const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
