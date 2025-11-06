@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Site Speed Analyzer Pro - Ultimate Edition
 // @description  Revolutionary performance analyzer with GTM deep inspection, multi-format compression, AI recommendations, keyboard shortcuts & settings
-// @version      5.2
+// @version      5.3
 // @author       Pratik Chabria
 // @match        *://*/*
 // @grant        GM_getValue
@@ -39,7 +39,7 @@
 // UPDATE CHECKER - Check GitHub for new versions
 // ============================================================================
 function checkForScriptUpdates() {
-  const currentVersion = '5.2-Working'; // Match your @version
+  const currentVersion = '5.3'; // Match your @version
   const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
   const downloadUrl = versionUrl;
   
@@ -141,7 +141,7 @@ function checkForScriptUpdates() {
 // UPDATE CHECKER - Check GitHub for new versions
 // ============================================================================
 function checkForScriptUpdates() {
-  const currentVersion = '5.2-Working'; // Match your @version
+  const currentVersion = '5.3'; // Match your @version
   const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
   const downloadUrl = versionUrl;
   
@@ -4160,7 +4160,7 @@ function createToolbar() {
   toolbar.innerHTML = `
     <div style="margin-bottom: 16px;">
       <div style="font-size: 16px; font-weight: 800; color: #19325d; margin-bottom: 4px;">⚡ Speed Analyzer Pro</div>
-      <div style="font-size: 10px; color: #999;">Ultimate Edition v5.2</div>
+      <div style="font-size: 10px; color: #999;">Ultimate Edition v5.3</div>
     </div>
 
     <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px; padding-bottom:16px; border-bottom:2px solid rgba(0,0,0,0.06);">
@@ -4335,7 +4335,7 @@ function createToolbar() {
   const checkUpdatesBtn = toolbar.querySelector('#checkUpdatesBtn');
   if (checkUpdatesBtn) {
     checkUpdatesBtn.addEventListener('click', () => {
-      const currentVersion = '5.2-Working'; // Match your @version
+      const currentVersion = '5.3'; // Match your @version
       const downloadUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
       
       // If button is in "Update Available" state, open download link
