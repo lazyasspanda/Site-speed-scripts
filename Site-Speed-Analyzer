@@ -8,8 +8,8 @@
 // @grant        GM_setValue
 // @grant        GM_xmlhttpRequest
 // @connect      raw.githubusercontent.com
-// @updateURL    https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer
-// @downloadURL  https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer
+// @updateURL    https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer
+// @downloadURL  https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer
 // ==/UserScript==
 
 (function () {
@@ -40,7 +40,7 @@
 // ============================================================================
 function checkForScriptUpdates() {
   const currentVersion = '5.3'; // Match your @version
-  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
+  const versionUrl = 'https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
   const downloadUrl = versionUrl;
   
   const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
