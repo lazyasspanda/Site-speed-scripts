@@ -6,8 +6,10 @@
 // @match        *://*/*
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @updateURL    https://itdealeron-my.sharepoint.com/:u:/g/personal/pratik_chabria_dealeron_com/EUzqOn5ym5FGip2Ho2T2ytMBqdNCBfgGnIZQkpnSr35MOA?e=Zwqltb
-// @downloadURL  https://itdealeron-my.sharepoint.com/:u:/g/personal/pratik_chabria_dealeron_com/EUzqOn5ym5FGip2Ho2T2ytMBqdNCBfgGnIZQkpnSr35MOA?e=Zwqltb
+// @grant        GM_xmlhttpRequest
+// @connect      raw.githubusercontent.com
+// @updateURL    https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer
+// @downloadURL  https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer
 // ==/UserScript==
 
 (function () {
@@ -33,6 +35,106 @@
     return false;
   }
 
+// ============================================================================
+// UPDATE CHECKER - Check GitHub for new versions
+// ============================================================================
+function checkForScriptUpdates() {
+  const currentVersion = '5.2-Working'; // Match your @version
+  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
+  const downloadUrl = versionUrl;
+  
+  const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
+  const SUPPRESS_AFTER_UPDATE_MS = 10 * 60 * 1000; // 10 minutes
+  
+  function showUpdatePopup(latestVersion) {
+    const showPopup = () => {
+      if (document.getElementById('updatePopupBox')) return;
+      if (!document.body) {
+        setTimeout(showPopup, 100);
+        return;
+      }
+      
+      const box = document.createElement('div');
+      box.id = 'updatePopupBox';
+      box.innerHTML = `
+        <div style="position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg, #19325d 0%, #0e1d38 100%);color:white;padding:16px 20px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.4);z-index:999999;font-family:'Segoe UI', Arial, sans-serif;animation:slideUpFadeIn 0.4s ease-out;max-width:300px;border:2px solid #fb741c">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="font-size:24px">🚀</div>
+            <div style="font-weight:800;font-size:15px">Update Available for Speed Analyzer</div>
+          </div>
+          <div style="font-size:13px;margin-bottom:12px;line-height:1.5">
+            New version <strong style="color:#fb741c">${latestVersion}</strong> is available!<br>
+            Current version: <strong>${currentVersion}</strong>
+          </div>
+          <button id="updateNowBtn" style="width:100%;background:linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);border:none;color:white;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 3px 10px rgba(46, 204, 113, 0.4);transition:all 0.3s ease">
+            Update Now
+          </button>
+        </div>
+        <style>
+          @keyframes slideUpFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          #updateNowBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.6);
+          }
+        </style>
+      `;
+      document.body.appendChild(box);
+      
+      document.getElementById('updateNowBtn').addEventListener('click', () => {
+        localStorage.setItem('speedanalyzer_lastUpdateClick', Date.now().toString());
+        window.open(downloadUrl, '_blank');
+        box.remove();
+      });
+    };
+    showPopup();
+  }
+  
+  function checkUpdate() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkUpdate);
+      return;
+    }
+    
+    // Check if user recently clicked Update button
+    const lastUpdateClick = parseInt(localStorage.getItem('speedanalyzer_lastUpdateClick') || '0', 10);
+    const timeSinceClick = Date.now() - lastUpdateClick;
+    
+    if (timeSinceClick < SUPPRESS_AFTER_UPDATE_MS && timeSinceClick > 0) {
+      return; // Suppress check
+    }
+    
+    if (lastUpdateClick > 0 && timeSinceClick > SUPPRESS_AFTER_UPDATE_MS) {
+      localStorage.removeItem('speedanalyzer_lastUpdateClick');
+    }
+    
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: `${versionUrl}?t=${Date.now()}`,
+      onload: function(response) {
+        if (response.status === 200) {
+          const match = response.responseText.match(/@version\s+([\d\.\-\w]+)/);
+          const latestVersion = match ? match[1] : null;
+          
+          if (latestVersion && latestVersion !== currentVersion) {
+            showUpdatePopup(latestVersion);
+          }
+        }
+      },
+      onerror: function(err) {
+        console.error('Update check error:', err);
+      }
+    });
+  }
+  
+  // Initial check after 2 seconds
+  setTimeout(checkUpdate, 2000);
+  
+  // Periodic check every 24 hours
+  setInterval(checkUpdate, CHECK_INTERVAL);
+}
 
 
   // ============================================================================
@@ -3893,237 +3995,319 @@
     });
   }
 
-  // ============================================================================
-  // SECTION 18: DRAGGABLE TOOLBAR
-  // Modify this section to change toolbar appearance or position
-  // ============================================================================
+ // ============================================================================
+// SECTION 18: DRAGGABLE TOOLBAR
+// Modify this section to change toolbar appearance or position
+// ============================================================================
 
-  function createToolbar() {
-    const existingBtn = document.getElementById("spaToggleBtn");
-    const existingToolbar = document.getElementById("spaToolbar");
-    if (existingBtn) existingBtn.remove();
-    if (existingToolbar) existingToolbar.remove();
+function createToolbar() {
+  const existingBtn = document.getElementById("spaToggleBtn");
+  const existingToolbar = document.getElementById("spaToolbar");
+  if (existingBtn) existingBtn.remove();
+  if (existingToolbar) existingToolbar.remove();
 
-    let savedTop = GM_getValue("toolbarTop", null);
-    if (savedTop == null) {
-      savedTop = Math.max(100, Math.floor(window.innerHeight / 2) - 24);
-    }
-    savedTop = Math.max(50, Math.min(savedTop, window.innerHeight - 100));
+  let savedTop = GM_getValue("toolbarTop", null);
+  if (savedTop == null) {
+    savedTop = Math.max(100, Math.floor(window.innerHeight / 2) - 24);
+  }
+  savedTop = Math.max(50, Math.min(savedTop, window.innerHeight - 100));
 
-    const toggleBtn = document.createElement("button");
-    toggleBtn.id = "spaToggleBtn";
-    toggleBtn.textContent = "≡";
-    toggleBtn.title = "Open Analyzer";
-    toggleBtn.style.cssText = `
-      position: fixed;
-      top: ${savedTop}px;
-      left: 0px;
-      z-index: 2147483647;
-      background: linear-gradient(135deg, #19325d, #2a4a8d);
-      color: white;
-      border: none;
-      padding: 8px 6px;
-      border-radius: 0 8px 8px 0;
-      cursor: grab;
-      width: 28px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 2px 0 12px rgba(0,0,0,0.6);
-      transition: all 0.2s ease;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    `;
+  const toggleBtn = document.createElement("button");
+  toggleBtn.id = "spaToggleBtn";
+  toggleBtn.textContent = "≡";
+  toggleBtn.title = "Open Analyzer";
+  toggleBtn.style.cssText = `
+    position: fixed;
+    top: ${savedTop}px;
+    left: 0px;
+    z-index: 2147483647;
+    background: linear-gradient(135deg, #19325d, #2a4a8d);
+    color: white;
+    border: none;
+    padding: 8px 6px;
+    border-radius: 0 8px 8px 0;
+    cursor: grab;
+    width: 28px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.6);
+    transition: all 0.2s ease;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  `;
 
-    const toolbar = document.createElement("div");
-    toolbar.id = "spaToolbar";
-    toolbar.className = "spa-glass-panel";
-    toolbar.style.cssText = `
-      position: fixed;
-      top: ${savedTop}px;
-      left: -280px;
-      z-index: 2147483646;
-      padding: 16px;
-      border-radius: 0 12px 12px 0;
-      width: 240px;
-      box-shadow: 2px 0 32px rgba(0,0,0,0.3);
-      transition: left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    `;
+  const toolbar = document.createElement("div");
+  toolbar.id = "spaToolbar";
+  toolbar.className = "spa-glass-panel";
+  toolbar.style.cssText = `
+    position: fixed;
+    top: ${savedTop}px;
+    left: -280px;
+    z-index: 2147483646;
+    padding: 16px;
+    border-radius: 0 12px 12px 0;
+    width: 240px;
+    box-shadow: 2px 0 32px rgba(0,0,0,0.3);
+    transition: left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  `;
 
-    toolbar.innerHTML = `
-      <div style="margin-bottom: 16px;">
-        <div style="font-size: 16px; font-weight: 800; color: #19325d; margin-bottom: 4px;">⚡ Speed Analyzer Pro</div>
-        <div style="font-size: 10px; color: #999;">Ultimate Edition v5.2</div>
-      </div>
+  toolbar.innerHTML = `
+    <div style="margin-bottom: 16px;">
+      <div style="font-size: 16px; font-weight: 800; color: #19325d; margin-bottom: 4px;">⚡ Speed Analyzer Pro</div>
+      <div style="font-size: 10px; color: #999;">Ultimate Edition v5.2</div>
+    </div>
 
-      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px; padding-bottom:16px; border-bottom:2px solid rgba(0,0,0,0.06);">
-        <button id="analyzeBtn" class="spa-btn"
-          style="padding:12px; background:linear-gradient(135deg,#fb741c,#ff8c42); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
-          <span>🚀</span><span style="flex:1">Analyze Page</span>
-        </button>
-        <button id="clearBtn" class="spa-btn"
-          style="padding:12px; background:linear-gradient(135deg,#e74c3c,#c0392b); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
-          <span>🧹</span><span style="flex:1">Clear Analysis</span>
-        </button>
-      </div>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px; padding-bottom:16px; border-bottom:2px solid rgba(0,0,0,0.06);">
+      <button id="analyzeBtn" class="spa-btn"
+        style="padding:12px; background:linear-gradient(135deg,#fb741c,#ff8c42); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
+        <span>🚀</span><span style="flex:1">Analyze Page</span>
+      </button>
+      <button id="clearBtn" class="spa-btn"
+        style="padding:12px; background:linear-gradient(135deg,#e74c3c,#c0392b); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
+        <span>🧹</span><span style="flex:1">Clear Analysis</span>
+      </button>
+    </div>
 
-      <div id="quickStats" style="display:none; margin-top:12px; padding:12px; background:linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); border-radius:8px;">
-        <div style="font-size:10px; font-weight:700; color:#667eea; margin-bottom:8px; text-transform:uppercase;">Current Analysis</div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:10px;">
-          <div>
-            <div style="color:#999;">Score</div>
-            <div id="quickScore" style="font-size:16px; font-weight:700; color:#19325d;">-</div>
-          </div>
-          <div>
-            <div style="color:#999;">Images</div>
-            <div id="quickImages" style="font-size:16px; font-weight:700; color:#19325d;">-</div>
-          </div>
+    <div id="quickStats" style="display:none; margin-top:12px; padding:12px; background:linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); border-radius:8px;">
+      <div style="font-size:10px; font-weight:700; color:#667eea; margin-bottom:8px; text-transform:uppercase;">Current Analysis</div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:10px;">
+        <div>
+          <div style="color:#999;">Score</div>
+          <div id="quickScore" style="font-size:16px; font-weight:700; color:#19325d;">-</div>
+        </div>
+        <div>
+          <div style="color:#999;">Images</div>
+          <div id="quickImages" style="font-size:16px; font-weight:700; color:#19325d;">-</div>
         </div>
       </div>
+    </div>
 
-      <div style="margin-bottom:8px; margin-top:16px;">
-        <div style="font-size:10px; font-weight:700; color:#666; text-transform:uppercase; letter-spacing:.5px;">Advanced Tools</div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:6px;">
+    <div style="margin-bottom:8px; margin-top:16px;">
+      <div style="font-size:10px; font-weight:700; color:#666; text-transform:uppercase; letter-spacing:.5px;">Advanced Tools</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:6px;">
 
-        <button id="gtmBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
-          <span>🧩</span><span style="flex:1">GTM Deep Analysis</span>
-        </button>
-          <button id="videoOptimizationBtn" class="spa-btn"
+      <button id="gtmBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
+        <span>🧩</span><span style="flex:1">GTM Deep Analysis</span>
+      </button>
+      <button id="videoOptimizationBtn" class="spa-btn"
         style="padding: 12px 16px; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 700; width: 100%; text-align: left; margin-bottom: 8px; transition: all 0.2s;">
         🎬 Video Optimization
       </button>
-        <button id="historyBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
-          <span>🕒</span><span style="flex:1">View History</span>
-        </button>
-        <button id="settingsBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
-          <span>⚙️</span><span style="flex:1">Settings</span>
-        </button>
-        <button id="blockAnalysisBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
-          <span>🔍</span><span style="flex:1">Block Analysis</span>
-        </button>
-        <button id="legendBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
-          <span>❓</span><span style="flex:1">Icon Legend</span>
-        </button>
-      </div>
+      <button id="historyBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
+        <span>🕒</span><span style="flex:1">View History</span>
+      </button>
+      <button id="settingsBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
+        <span>⚙️</span><span style="flex:1">Settings</span>
+      </button>
+      <button id="blockAnalysisBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
+        <span>🔍</span><span style="flex:1">Block Analysis</span>
+      </button>
+      <button id="legendBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
+        <span>❓</span><span style="flex:1">Icon Legend</span>
+      </button>
+      
+      <!-- NEW: Check for Updates Button -->
+      <button id="checkUpdatesBtn" class="spa-btn" style="padding:10px 12px; background:#fb741c; color:white; border:none; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px; transition:all 0.3s ease;">
+        <span>🔄</span><span style="flex:1">Check for Updates</span>
+      </button>
+    </div>
 
-      <div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(0,0,0,0.06); text-align:center;">
-        <div style="font-size:8px; color:#999;">Made with ❤️ by Pratik Chabria</div>
-      </div>
-    `;
+    <div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(0,0,0,0.06); text-align:center;">
+      <div style="font-size:8px; color:#999;">Made with ❤️ by Pratik Chabria</div>
+    </div>
+  `;
 
-    document.body.appendChild(toggleBtn);
-    document.body.appendChild(toolbar);
+  document.body.appendChild(toggleBtn);
+  document.body.appendChild(toolbar);
 
-    let toolbarOpen = false;
-    let isDragging = false;
-    let dragStartY = 0;
-    let dragStartTop = 0;
-    let hasMoved = false;
+  let toolbarOpen = false;
+  let isDragging = false;
+  let dragStartY = 0;
+  let dragStartTop = 0;
+  let hasMoved = false;
 
-    toggleBtn.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      hasMoved = false;
-      dragStartY = e.clientY;
-      dragStartTop = parseInt(toggleBtn.style.top, 10);
-      toggleBtn.style.cursor = "grabbing";
-      toggleBtn.style.transition = "none";
-      toolbar.style.transition = "none";
-      e.preventDefault();
-      e.stopPropagation();
+  toggleBtn.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    hasMoved = false;
+    dragStartY = e.clientY;
+    dragStartTop = parseInt(toggleBtn.style.top, 10);
+    toggleBtn.style.cursor = "grabbing";
+    toggleBtn.style.transition = "none";
+    toolbar.style.transition = "none";
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    const deltaY = e.clientY - dragStartY;
+    if (Math.abs(deltaY) > 3) hasMoved = true;
+    let newTop = dragStartTop + deltaY;
+    const maxTop = window.innerHeight - 48;
+    newTop = Math.max(50, Math.min(newTop, maxTop));
+    toggleBtn.style.top = `${newTop}px`;
+    toolbar.style.top = `${newTop}px`;
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (!isDragging) return;
+    isDragging = false;
+    toggleBtn.style.cursor = "grab";
+    toggleBtn.style.transition = "all 0.2s ease";
+    toolbar.style.transition = "left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)";
+    const currentTop = parseInt(toggleBtn.style.top, 10);
+    GM_setValue("toolbarTop", currentTop);
+    if (!hasMoved) {
+      toolbarOpen = !toolbarOpen;
+      toolbar.style.left = toolbarOpen ? "28px" : "-280px";
+      toggleBtn.textContent = toolbarOpen ? "⟨" : "≡";
+    }
+    hasMoved = false;
+  });
+
+  toggleBtn.addEventListener("mouseenter", () => {
+    if (!isDragging) toggleBtn.style.width = "32px";
+  });
+  toggleBtn.addEventListener("mouseleave", () => {
+    if (!isDragging) toggleBtn.style.width = "28px";
+  });
+
+  const analyzeBtn = toolbar.querySelector("#analyzeBtn");
+  const clearBtn = toolbar.querySelector("#clearBtn");
+
+  analyzeBtn.addEventListener("click", async function () {
+    if (analysisActive) return;
+    this.innerHTML = `<span>⏳</span><span style="flex:1">Analyzing...</span>`;
+    this.style.background = "linear-gradient(135deg,#f39c12,#e67e22)";
+    this.disabled = true;
+    await performAnalysis();
+    this.innerHTML = `<span>🚀</span><span style="flex:1">Analyze Page</span>`;
+    this.style.background = "linear-gradient(135deg,#fb741c,#ff8c42)";
+    this.disabled = false;
+    toolbar.querySelector("#quickStats").style.display = "block";
+    toolbar.querySelector("#quickScore").textContent = performanceScore || 0;
+    toolbar.querySelector("#quickImages").textContent = String(imageData.length);
+  });
+
+  clearBtn.addEventListener("click", () => {
+    overlays.forEach(({ overlay }) => {
+      try {
+        overlay?.remove();
+      } catch (e) {}
     });
+    document.querySelectorAll(".spa-image-overlay, .spa-video-overlay").forEach((el) => el.remove());
+    document.getElementById("spaSummaryContainer")?.remove();
+    document.querySelector(".spa-hidden-panel")?.remove();
+    if (resizeObserver) {
+      try {
+        resizeObserver.disconnect();
+      } catch (e) {}
+      resizeObserver = null;
+    }
+    overlays = [];
+    imageData = [];
+    videoData = [];
+    mapData = [];
 
-    document.addEventListener("mousemove", (e) => {
-      if (!isDragging) return;
-      const deltaY = e.clientY - dragStartY;
-      if (Math.abs(deltaY) > 3) hasMoved = true;
-      let newTop = dragStartTop + deltaY;
-      const maxTop = window.innerHeight - 48;
-      newTop = Math.max(50, Math.min(newTop, maxTop));
-      toggleBtn.style.top = `${newTop}px`;
-      toolbar.style.top = `${newTop}px`;
-    });
+    hiddenOverlays.clear();
+    currentFilter = "all";
+    analysisActive = false;
+    summaryBox = null;
+    showToast("🧹 Analysis cleared", "info");
+    toolbar.querySelector("#quickStats").style.display = "none";
+  });
 
-    document.addEventListener("mouseup", () => {
-      if (!isDragging) return;
-      isDragging = false;
-      toggleBtn.style.cursor = "grab";
-      toggleBtn.style.transition = "all 0.2s ease";
-      toolbar.style.transition = "left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)";
-      const currentTop = parseInt(toggleBtn.style.top, 10);
-      GM_setValue("toolbarTop", currentTop);
-      if (!hasMoved) {
-        toolbarOpen = !toolbarOpen;
-        toolbar.style.left = toolbarOpen ? "28px" : "-280px";
-        toggleBtn.textContent = toolbarOpen ? "⟨" : "≡";
+  toolbar.querySelector("#gtmBtn").addEventListener("click", () => showGTMAnalysisModal());
+  document.getElementById('videoOptimizationBtn')?.addEventListener('click', showVideoOptimizationModal);
+  toolbar.querySelector("#historyBtn").addEventListener("click", () => showHistoryModal());
+  toolbar.querySelector("#settingsBtn").addEventListener("click", () => showSettingsModal());
+  toolbar.querySelector("#legendBtn").addEventListener("click", () => showIconLegendModal());
+  toolbar.querySelector("#blockAnalysisBtn").addEventListener("click", () => showBlockAnalysisModal());
+
+  // NEW: Check for Updates Button Event Listener
+  const checkUpdatesBtn = toolbar.querySelector('#checkUpdatesBtn');
+  if (checkUpdatesBtn) {
+    checkUpdatesBtn.addEventListener('click', () => {
+      const currentVersion = '5.2-Working'; // Match your @version
+      const downloadUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
+      
+      // If button is in "Update Available" state, open download link
+      if (checkUpdatesBtn.getAttribute('data-update-ready') === 'true') {
+        window.open(downloadUrl, '_blank');
+        localStorage.setItem('speedanalyzer_lastUpdateClick', Date.now().toString());
+        showToast('Opening update page...', 'info');
+        return;
       }
-      hasMoved = false;
-    });
-
-    toggleBtn.addEventListener("mouseenter", () => {
-      if (!isDragging) toggleBtn.style.width = "32px";
-    });
-    toggleBtn.addEventListener("mouseleave", () => {
-      if (!isDragging) toggleBtn.style.width = "28px";
-    });
-
-    const analyzeBtn = toolbar.querySelector("#analyzeBtn");
-    const clearBtn = toolbar.querySelector("#clearBtn");
-
-    analyzeBtn.addEventListener("click", async function () {
-      if (analysisActive) return;
-      this.innerHTML = `<span>⏳</span><span style="flex:1">Analyzing...</span>`;
-      this.style.background = "linear-gradient(135deg,#f39c12,#e67e22)";
-      this.disabled = true;
-      await performAnalysis();
-      this.innerHTML = `<span>🚀</span><span style="flex:1">Analyze Page</span>`;
-      this.style.background = "linear-gradient(135deg,#fb741c,#ff8c42)";
-      this.disabled = false;
-      toolbar.querySelector("#quickStats").style.display = "block";
-      toolbar.querySelector("#quickScore").textContent = performanceScore || 0;
-      toolbar.querySelector("#quickImages").textContent = String(imageData.length);
-    });
-
-    clearBtn.addEventListener("click", () => {
-      overlays.forEach(({ overlay }) => {
-        try {
-          overlay?.remove();
-        } catch (e) {}
+      
+      // Manual check
+      checkUpdatesBtn.style.opacity = '0.6';
+      checkUpdatesBtn.style.pointerEvents = 'none';
+      checkUpdatesBtn.innerHTML = '<span>⏳</span><span style="flex:1">Checking...</span>';
+      
+      GM_xmlhttpRequest({
+        method: 'GET',
+        url: `${downloadUrl}?t=${Date.now()}`,
+        onload: function(response) {
+          checkUpdatesBtn.style.opacity = '1';
+          checkUpdatesBtn.style.pointerEvents = 'auto';
+          
+          if (response.status === 200) {
+            const match = response.responseText.match(/@version\s+([\d\.\-\w]+)/);
+            const latestVersion = match ? match[1] : null;
+            
+            if (latestVersion && latestVersion !== currentVersion) {
+              // UPDATE AVAILABLE
+              checkUpdatesBtn.innerHTML = `<span>✨</span><span style="flex:1">Update Available (v${latestVersion})</span>`;
+              checkUpdatesBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+              checkUpdatesBtn.style.cursor = 'pointer';
+              checkUpdatesBtn.setAttribute('data-update-ready', 'true');
+              showToast(`Update available! v${latestVersion}`, 'success');
+            } else {
+              // NO UPDATE
+              checkUpdatesBtn.innerHTML = '<span>✅</span><span style="flex:1">Up to Date</span>';
+              checkUpdatesBtn.style.background = '#27ae60';
+              checkUpdatesBtn.style.cursor = 'default';
+              checkUpdatesBtn.setAttribute('data-update-ready', 'false');
+              showToast(`You're on the latest version!`, 'info');
+            }
+            
+            // Reset after 4 seconds
+            setTimeout(() => {
+              checkUpdatesBtn.innerHTML = '<span>🔄</span><span style="flex:1">Check for Updates</span>';
+              checkUpdatesBtn.style.background = '#fb741c';
+              checkUpdatesBtn.style.cursor = 'pointer';
+              checkUpdatesBtn.removeAttribute('data-update-ready');
+            }, 4000);
+          } else {
+            throw new Error(`HTTP ${response.status}`);
+          }
+        },
+        onerror: function(err) {
+          checkUpdatesBtn.style.opacity = '1';
+          checkUpdatesBtn.style.pointerEvents = 'auto';
+          checkUpdatesBtn.innerHTML = '<span>❌</span><span style="flex:1">Check Failed</span>';
+          checkUpdatesBtn.style.background = '#e74c3c';
+          checkUpdatesBtn.setAttribute('data-update-ready', 'false');
+          showToast('Update check failed!', 'error');
+          console.error('Update check error:', err);
+          
+          // Reset after 3 seconds
+          setTimeout(() => {
+            checkUpdatesBtn.innerHTML = '<span>🔄</span><span style="flex:1">Check for Updates</span>';
+            checkUpdatesBtn.style.background = '#fb741c';
+            checkUpdatesBtn.removeAttribute('data-update-ready');
+          }, 3000);
+        }
       });
-      document.querySelectorAll(".spa-image-overlay, .spa-video-overlay").forEach((el) => el.remove());
-      document.getElementById("spaSummaryContainer")?.remove();
-      document.querySelector(".spa-hidden-panel")?.remove();
-      if (resizeObserver) {
-        try {
-          resizeObserver.disconnect();
-        } catch (e) {}
-        resizeObserver = null;
-      }
-      overlays = [];
-      imageData = [];
-      videoData = [];
-      mapData = [];
-
-      hiddenOverlays.clear();
-      currentFilter = "all";
-      analysisActive = false;
-      summaryBox = null;
-      showToast("🧹 Analysis cleared", "info");
-      toolbar.querySelector("#quickStats").style.display = "none";
     });
-
-    toolbar.querySelector("#gtmBtn").addEventListener("click", () => showGTMAnalysisModal());
-    document.getElementById('videoOptimizationBtn')?.addEventListener('click', showVideoOptimizationModal);
-
-    toolbar.querySelector("#historyBtn").addEventListener("click", () => showHistoryModal());
-    toolbar.querySelector("#settingsBtn").addEventListener("click", () => showSettingsModal());
-    toolbar.querySelector("#legendBtn").addEventListener("click", () => showIconLegendModal());
-    toolbar.querySelector("#blockAnalysisBtn").addEventListener("click", () => showBlockAnalysisModal());
-
   }
+}
+
   // ============================================================================
   // SECTION 19: SETTINGS MODAL
   // Modify this section to add new settings or change UI
@@ -5792,6 +5976,8 @@
     if (Array.isArray(savedHistory)) {
       analysisHistory = savedHistory;
     }
+
+    checkForScriptUpdates();
 
     if (userSettings.autoAnalyze) {
 
