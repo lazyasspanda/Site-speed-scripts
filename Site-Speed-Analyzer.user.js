@@ -10,10 +10,10 @@
 // @grant        GM_notification
 // @grant        GM_xmlhttpRequest
 // @grant        GM_openInTab
-// @homepageURL  https://github.com/lazyasspanda/Site-speed-scripts
+// @homepageURL https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts
 // @connect      raw.githubusercontent.com
-// @updateURL    https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js
-// @downloadURL  https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js
+// @updateURL   https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/main/Site-Speed-Analyzer.user.js
+// @downloadURL https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/main/Site-Speed-Analyzer.user.js
 // ==/UserScript==
 
 (function () {
