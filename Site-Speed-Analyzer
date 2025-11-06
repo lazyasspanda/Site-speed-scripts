@@ -35,6 +35,108 @@
     return false;
   }
 
+  // ============================================================================
+// UPDATE CHECKER - Check GitHub for new versions
+// ============================================================================
+function checkForScriptUpdates() {
+  const currentVersion = '5.2-Working'; // Match your @version
+  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer';
+  const downloadUrl = versionUrl;
+  
+  const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
+  const SUPPRESS_AFTER_UPDATE_MS = 10 * 60 * 1000; // 10 minutes
+  
+  function showUpdatePopup(latestVersion) {
+    const showPopup = () => {
+      if (document.getElementById('updatePopupBox')) return;
+      if (!document.body) {
+        setTimeout(showPopup, 100);
+        return;
+      }
+      
+      const box = document.createElement('div');
+      box.id = 'updatePopupBox';
+      box.innerHTML = `
+        <div style="position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg, #19325d 0%, #0e1d38 100%);color:white;padding:16px 20px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.4);z-index:999999;font-family:'Segoe UI', Arial, sans-serif;animation:slideUpFadeIn 0.4s ease-out;max-width:300px;border:2px solid #fb741c">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="font-size:24px">🚀</div>
+            <div style="font-weight:800;font-size:15px">Update Available for Speed Analyzer</div>
+          </div>
+          <div style="font-size:13px;margin-bottom:12px;line-height:1.5">
+            New version <strong style="color:#fb741c">${latestVersion}</strong> is available!<br>
+            Current version: <strong>${currentVersion}</strong>
+          </div>
+          <button id="updateNowBtn" style="width:100%;background:linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);border:none;color:white;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 3px 10px rgba(46, 204, 113, 0.4);transition:all 0.3s ease">
+            Update Now
+          </button>
+        </div>
+        <style>
+          @keyframes slideUpFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          #updateNowBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.6);
+          }
+        </style>
+      `;
+      document.body.appendChild(box);
+      
+      document.getElementById('updateNowBtn').addEventListener('click', () => {
+        localStorage.setItem('speedanalyzer_lastUpdateClick', Date.now().toString());
+        window.open(downloadUrl, '_blank');
+        box.remove();
+      });
+    };
+    showPopup();
+  }
+  
+  function checkUpdate() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkUpdate);
+      return;
+    }
+    
+    // Check if user recently clicked Update button
+    const lastUpdateClick = parseInt(localStorage.getItem('speedanalyzer_lastUpdateClick') || '0', 10);
+    const timeSinceClick = Date.now() - lastUpdateClick;
+    
+    if (timeSinceClick < SUPPRESS_AFTER_UPDATE_MS && timeSinceClick > 0) {
+      return; // Suppress check
+    }
+    
+    if (lastUpdateClick > 0 && timeSinceClick > SUPPRESS_AFTER_UPDATE_MS) {
+      localStorage.removeItem('speedanalyzer_lastUpdateClick');
+    }
+    
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: `${versionUrl}?t=${Date.now()}`,
+      onload: function(response) {
+        if (response.status === 200) {
+          const match = response.responseText.match(/@version\s+([\d\.\-\w]+)/);
+          const latestVersion = match ? match[1] : null;
+          
+          if (latestVersion && latestVersion !== currentVersion) {
+            showUpdatePopup(latestVersion);
+          }
+        }
+      },
+      onerror: function(err) {
+        console.error('Update check error:', err);
+      }
+    });
+  }
+  
+  // Initial check after 2 seconds
+  setTimeout(checkUpdate, 2000);
+  
+  // Periodic check every 24 hours
+  setInterval(checkUpdate, CHECK_INTERVAL);
+}
+
+
 // ============================================================================
 // UPDATE CHECKER - Check GitHub for new versions
 // ============================================================================
