@@ -12,6 +12,7 @@
 // @grant        GM_openInTab
 // @homepageURL https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts
 // @connect      raw.githubusercontent.com
+// @connect      github.com
 // @updateURL   https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/main/Site-Speed-Analyzer.user.js
 // @downloadURL https://raw.githubusercontent.com/lazyasspanda/Site-speed-scripts/main/Site-Speed-Analyzer.user.js
 // ==/UserScript==
@@ -141,106 +142,7 @@ function checkForScriptUpdates() {
 }
 
 
-// ============================================================================
-// UPDATE CHECKER - Check GitHub for new versions
-// ============================================================================
-function checkForScriptUpdates() {
-  const currentVersion = '5.3'; // Match your @version
-  const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
-  const downloadUrl = versionUrl;
 
-  const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
-  const SUPPRESS_AFTER_UPDATE_MS = 10 * 60 * 1000; // 10 minutes
-
-  function showUpdatePopup(latestVersion) {
-    const showPopup = () => {
-      if (document.getElementById('updatePopupBox')) return;
-      if (!document.body) {
-        setTimeout(showPopup, 100);
-        return;
-      }
-
-      const box = document.createElement('div');
-      box.id = 'updatePopupBox';
-      box.innerHTML = `
-        <div style="position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg, #19325d 0%, #0e1d38 100%);color:white;padding:16px 20px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.4);z-index:999999;font-family:'Segoe UI', Arial, sans-serif;animation:slideUpFadeIn 0.4s ease-out;max-width:300px;border:2px solid #fb741c">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-            <div style="font-size:24px">🚀</div>
-            <div style="font-weight:800;font-size:15px">Update Available for Speed Analyzer</div>
-          </div>
-          <div style="font-size:13px;margin-bottom:12px;line-height:1.5">
-            New version <strong style="color:#fb741c">${latestVersion}</strong> is available!<br>
-            Current version: <strong>${currentVersion}</strong>
-          </div>
-          <button id="updateNowBtn" style="width:100%;background:linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);border:none;color:white;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 3px 10px rgba(46, 204, 113, 0.4);transition:all 0.3s ease">
-            Update Now
-          </button>
-        </div>
-        <style>
-          @keyframes slideUpFadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          #updateNowBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.6);
-          }
-        </style>
-      `;
-      document.body.appendChild(box);
-
-      document.getElementById('updateNowBtn').addEventListener('click', () => {
-        localStorage.setItem('speedanalyzer_lastUpdateClick', Date.now().toString());
-        window.open(downloadUrl, '_blank');
-        box.remove();
-      });
-    };
-    showPopup();
-  }
-
-  function checkUpdate() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', checkUpdate);
-      return;
-    }
-
-    // Check if user recently clicked Update button
-    const lastUpdateClick = parseInt(localStorage.getItem('speedanalyzer_lastUpdateClick') || '0', 10);
-    const timeSinceClick = Date.now() - lastUpdateClick;
-
-    if (timeSinceClick < SUPPRESS_AFTER_UPDATE_MS && timeSinceClick > 0) {
-      return; // Suppress check
-    }
-
-    if (lastUpdateClick > 0 && timeSinceClick > SUPPRESS_AFTER_UPDATE_MS) {
-      localStorage.removeItem('speedanalyzer_lastUpdateClick');
-    }
-
-    GM_xmlhttpRequest({
-      method: 'GET',
-      url: `${versionUrl}?t=${Date.now()}`,
-      onload: function(response) {
-        if (response.status === 200) {
-          const match = response.responseText.match(/@version\s+([\d\.\-\w]+)/);
-          const latestVersion = match ? match[1] : null;
-
-          if (latestVersion && latestVersion !== currentVersion) {
-            showUpdatePopup(latestVersion);
-          }
-        }
-      },
-      onerror: function(err) {
-        console.error('Update check error:', err);
-      }
-    });
-  }
-
-  // Initial check after 2 seconds
-  setTimeout(checkUpdate, 2000);
-
-  // Periodic check every 24 hours
-  setInterval(checkUpdate, CHECK_INTERVAL);
-}
 
 
   // ============================================================================
@@ -3834,7 +3736,7 @@ function checkForScriptUpdates() {
         </button>`
             : ""
         }
-        
+
       </div>
 
       <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(0,0,0,0.08); font-size:8px; color:#999; text-align:center;">
@@ -4233,7 +4135,7 @@ function createToolbar() {
   const checkUpdatesBtn = toolbar.querySelector('#checkUpdatesBtn');
   if (checkUpdatesBtn) {
     checkUpdatesBtn.addEventListener('click', () => {
-      const currentVersion = '5.3'; // Match your @version
+      const currentVersion = '5.4'; // Match your @version
       const downloadUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
 
       // If button is in "Update Available" state, open download link
@@ -5520,11 +5422,11 @@ function createToolbar() {
   <div style="margin-left:12px; display:flex; flex-direction: column; gap: 6px; width: 140px;">
     <img src="${analysis.thumbnail}" style="width: 120px; height: auto; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1);" />
     <div style="display: flex; gap: 6px;">
-      <button class="download-thumb" data-thumb="${analysis.thumbnail}" data-idx="${idx}" 
+      <button class="download-thumb" data-thumb="${analysis.thumbnail}" data-idx="${idx}"
         style="flex: 1; padding: 6px 8px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">
         💾 Download
       </button>
-      <button class="custom-snapshot-btn spa-btn" data-src="${analysis.src}" 
+      <button class="custom-snapshot-btn spa-btn" data-src="${analysis.src}"
         style="flex: 1; padding: 6px 8px; background: #2d8de0; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">
         📸 Snapshot
       </button>
@@ -6100,14 +6002,14 @@ function showCustomSnapshotModal(videoSrc) {
   <div style="border:2px solid #2ecc71; border-radius:10px; overflow:hidden; margin-bottom:12px;">
     <canvas id="snapshotCanvas" style="width:100%; display:block;"></canvas>
   </div>
-  
+
   <!-- Compression Slider -->
   <div style="background:#f8f9fa; padding:16px; border-radius:8px; margin-bottom:12px; border:1px solid #ddd;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
       <label style="font-size:13px; font-weight:600; color:#19325d;">Image Quality</label>
       <span id="qualityValue" style="font-size:13px; font-weight:700; color:#667eea;">85%</span>
     </div>
-    <input type="range" id="qualitySlider" min="10" max="100" value="85" 
+    <input type="range" id="qualitySlider" min="10" max="100" value="85"
       style="width:100%; height:6px; border-radius:5px; background:linear-gradient(90deg, #e74c3c 0%, #f39c12 50%, #2ecc71 100%); outline:none; cursor:pointer;">
     <div style="display:flex; justify-content:space-between; font-size:10px; color:#999; margin-top:4px;">
       <span>🗜️ Smallest</span>
@@ -6188,11 +6090,11 @@ let currentQuality = 0.85;
 qualitySlider.addEventListener('input', (e) => {
   currentQuality = e.target.value / 100;
   qualityValue.textContent = `${e.target.value}%`;
-  
+
   // Rough estimation of file size based on quality (canvas dimensions factor in)
   const baseSize = (canvas.width * canvas.height * 3) / 1024; // rough KB
   const compressedSize = baseSize * currentQuality * 0.3; // approximate compression
-  
+
   if (compressedSize > 1024) {
     estimatedSize.textContent = `~${(compressedSize / 1024).toFixed(1)} MB`;
   } else {
