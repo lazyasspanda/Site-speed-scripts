@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Site Speed Analyzer Pro - Ultimate Edition
+// @name         Site Speed Analyzer Pro
 // @namespace    http://tampermonkey.net/
 // @description  Revolutionary performance analyzer with GTM deep inspection, multi-format compression, AI recommendations, keyboard shortcuts & settings
-// @version      5.3
+// @version      5.4
 // @author       Pratik Chabria
 // @match        *://*/*
 // @grant        GM_getValue
@@ -43,13 +43,13 @@
 // UPDATE CHECKER - Check GitHub for new versions
 // ============================================================================
 function checkForScriptUpdates() {
-  const currentVersion = '5.3'; // Match your @version
+  const currentVersion = '5.4'; // Match your @version
   const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
   const downloadUrl = versionUrl;
-  
+
   const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
   const SUPPRESS_AFTER_UPDATE_MS = 10 * 60 * 1000; // 10 minutes
-  
+
   function showUpdatePopup(latestVersion) {
     const showPopup = () => {
       if (document.getElementById('updatePopupBox')) return;
@@ -57,7 +57,7 @@ function checkForScriptUpdates() {
         setTimeout(showPopup, 100);
         return;
       }
-      
+
       const box = document.createElement('div');
       box.id = 'updatePopupBox';
       box.innerHTML = `
@@ -86,7 +86,7 @@ function checkForScriptUpdates() {
         </style>
       `;
       document.body.appendChild(box);
-      
+
       document.getElementById('updateNowBtn').addEventListener('click', () => {
         localStorage.setItem('speedanalyzer_lastUpdateClick', Date.now().toString());
         window.open(downloadUrl, '_blank');
@@ -95,25 +95,25 @@ function checkForScriptUpdates() {
     };
     showPopup();
   }
-  
+
   function checkUpdate() {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', checkUpdate);
       return;
     }
-    
+
     // Check if user recently clicked Update button
     const lastUpdateClick = parseInt(localStorage.getItem('speedanalyzer_lastUpdateClick') || '0', 10);
     const timeSinceClick = Date.now() - lastUpdateClick;
-    
+
     if (timeSinceClick < SUPPRESS_AFTER_UPDATE_MS && timeSinceClick > 0) {
       return; // Suppress check
     }
-    
+
     if (lastUpdateClick > 0 && timeSinceClick > SUPPRESS_AFTER_UPDATE_MS) {
       localStorage.removeItem('speedanalyzer_lastUpdateClick');
     }
-    
+
     GM_xmlhttpRequest({
       method: 'GET',
       url: `${versionUrl}?t=${Date.now()}`,
@@ -121,7 +121,7 @@ function checkForScriptUpdates() {
         if (response.status === 200) {
           const match = response.responseText.match(/@version\s+([\d\.\-\w]+)/);
           const latestVersion = match ? match[1] : null;
-          
+
           if (latestVersion && latestVersion !== currentVersion) {
             showUpdatePopup(latestVersion);
           }
@@ -132,10 +132,10 @@ function checkForScriptUpdates() {
       }
     });
   }
-  
+
   // Initial check after 2 seconds
   setTimeout(checkUpdate, 2000);
-  
+
   // Periodic check every 24 hours
   setInterval(checkUpdate, CHECK_INTERVAL);
 }
@@ -148,10 +148,10 @@ function checkForScriptUpdates() {
   const currentVersion = '5.3'; // Match your @version
   const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
   const downloadUrl = versionUrl;
-  
+
   const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
   const SUPPRESS_AFTER_UPDATE_MS = 10 * 60 * 1000; // 10 minutes
-  
+
   function showUpdatePopup(latestVersion) {
     const showPopup = () => {
       if (document.getElementById('updatePopupBox')) return;
@@ -159,7 +159,7 @@ function checkForScriptUpdates() {
         setTimeout(showPopup, 100);
         return;
       }
-      
+
       const box = document.createElement('div');
       box.id = 'updatePopupBox';
       box.innerHTML = `
@@ -188,7 +188,7 @@ function checkForScriptUpdates() {
         </style>
       `;
       document.body.appendChild(box);
-      
+
       document.getElementById('updateNowBtn').addEventListener('click', () => {
         localStorage.setItem('speedanalyzer_lastUpdateClick', Date.now().toString());
         window.open(downloadUrl, '_blank');
@@ -197,25 +197,25 @@ function checkForScriptUpdates() {
     };
     showPopup();
   }
-  
+
   function checkUpdate() {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', checkUpdate);
       return;
     }
-    
+
     // Check if user recently clicked Update button
     const lastUpdateClick = parseInt(localStorage.getItem('speedanalyzer_lastUpdateClick') || '0', 10);
     const timeSinceClick = Date.now() - lastUpdateClick;
-    
+
     if (timeSinceClick < SUPPRESS_AFTER_UPDATE_MS && timeSinceClick > 0) {
       return; // Suppress check
     }
-    
+
     if (lastUpdateClick > 0 && timeSinceClick > SUPPRESS_AFTER_UPDATE_MS) {
       localStorage.removeItem('speedanalyzer_lastUpdateClick');
     }
-    
+
     GM_xmlhttpRequest({
       method: 'GET',
       url: `${versionUrl}?t=${Date.now()}`,
@@ -223,7 +223,7 @@ function checkForScriptUpdates() {
         if (response.status === 200) {
           const match = response.responseText.match(/@version\s+([\d\.\-\w]+)/);
           const latestVersion = match ? match[1] : null;
-          
+
           if (latestVersion && latestVersion !== currentVersion) {
             showUpdatePopup(latestVersion);
           }
@@ -234,10 +234,10 @@ function checkForScriptUpdates() {
       }
     });
   }
-  
+
   // Initial check after 2 seconds
   setTimeout(checkUpdate, 2000);
-  
+
   // Periodic check every 24 hours
   setInterval(checkUpdate, CHECK_INTERVAL);
 }
@@ -640,17 +640,28 @@ function checkForScriptUpdates() {
   }
 
     function detectPageBlocks() {
-    const blocks = [];
-    const seenIds = new Set();
+  const blocks = [];
+  const seenIds = new Set();
 
-    // Detect elements with ID starting with 'block'
-    const blockElements = document.querySelectorAll("[id^='block']");
-    blockElements.forEach((el) => {
-      if (!seenIds.has(el.id)) {
-        seenIds.add(el.id);
-        blocks.push({id: el.id, type: "block", element: el, name: el.id.charAt(0).toUpperCase() + el.id.slice(1), images: []});
-      }
-    });
+  // Detect elements with ID starting with 'block'
+  const blockElements = document.querySelectorAll("[id^='block']");
+
+  blockElements.forEach((el) => {
+    // Filter out the toolbar button ID explicitly
+    if (el.id.toLowerCase() === 'blockanalysisbtn') return;
+
+    if (!seenIds.has(el.id)) {
+      seenIds.add(el.id);
+      blocks.push({
+        id: el.id,
+        type: "block",
+        element: el,
+        name: el.id.charAt(0).toUpperCase() + el.id.slice(1),
+        images: []
+      });
+    }
+  });
+
 
     // Detect elements with class containing 'contentSection'
     const contentSectionElements = document.querySelectorAll("[class*='contentSection']");
@@ -3360,347 +3371,224 @@ function checkForScriptUpdates() {
 
   // NEW: Advanced Bulk Compression Modal
   function showBulkCompressionModal(images) {
-    const backdrop = document.createElement("div");
-    backdrop.style.cssText = `
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.75); z-index: 999998;
-      display: flex; align-items: center; justify-content: center;
-      padding: 20px; backdrop-filter: blur(8px); animation: fadeIn 0.2s;
-    `;
+  const backdrop = document.createElement("div");
+  backdrop.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75); z-index: 999998;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; backdrop-filter: blur(8px); animation: fadeIn 0.2s;
+  `;
 
-    const modal = document.createElement("div");
-    modal.className = "spa-glass-panel";
-    modal.style.cssText = `
-      padding: 28px; border-radius: 16px; max-width: 800px; width: 100%;
-      max-height: 90vh; overflow-y: auto; animation: slideIn 0.3s;
-    `;
+  const modal = document.createElement("div");
+  modal.className = "spa-glass-panel";
+  modal.style.cssText = `
+    padding: 28px; border-radius: 16px; max-width: 800px; width: 100%;
+    max-height: 90vh; overflow-y: auto; animation: slideIn 0.3s;
+  `;
 
-    const formats = detectFormatSupport();
-    const formatOptions = [];
-    if (formats.webp) formatOptions.push("webp");
-    formatOptions.push("jpeg");
-    formatOptions.push("png");
+  const formats = detectFormatSupport();
+  const formatOptions = [];
+  if (formats.webp) formatOptions.push("webp");
+  formatOptions.push("jpeg");
+  formatOptions.push("png");
 
-    modal.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-        <div>
-          <h2 style="margin:0 0 4px 0; font-size:20px; color:#19325d;">📦 Bulk Compress Critical Images</h2>
-          <div style="font-size:12px; color:#666;">${images.length} critical images detected</div>
-        </div>
-        <button class="close-bulk-modal" style="background:none; border:none; font-size:24px; cursor:pointer; color:#999; transition: color 0.2s;" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#999'">✕</button>
+  modal.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+      <div>
+        <h2 style="margin:0 0 4px 0; font-size:20px; color:#19325d;">📦 Bulk Compress Critical Images</h2>
+        <div style="font-size:12px; color:#666;">${images.length} critical images detected</div>
       </div>
+      <button id="closeBulkModal" style="background:none; border:none; font-size:24px; cursor:pointer; color:#999; transition: color 0.2s;">✕</button>
+    </div>
 
-          <!-- Compression Settings -->
-      <div style="background:rgba(251,116,28,0.05); padding:16px; border-radius:10px; margin-bottom:20px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div style="font-size:13px; font-weight:700; color:#fb741c;">⚙️ Compression Settings</div>
-          <div style="text-align:right;">
-            <div style="font-size:9px; color:#666;">Estimated Savings</div>
-            <div id="bulkEstimatedSavings" style="font-size:14px; font-weight:700; color:#2ecc71;">Calculating...</div>
-          </div>
-        </div>
+    <!-- Compression Settings -->
+    <div style="background:rgba(251,116,28,0.05); padding:16px; border-radius:10px; margin-bottom:20px;">
+      <div style="font-size:13px; font-weight:700; color:#fb741c; margin-bottom:12px;">⚙️ Compression Settings</div>
 
-        <!-- Quality Slider -->
-        <div style="margin-bottom:16px;">
-          <label style="display:block; margin-bottom:8px; font-weight:600; font-size:12px; color:#19325d;">
-            Quality <span id="bulkQualityValue" style="color:#fb741c;">${userSettings.defaultQuality}</span>
-          </label>
-          <input type="range" id="bulkQualitySlider" min="10" max="100" value="${userSettings.defaultQuality}" step="5"
-            style="width:100%; height:6px; border-radius:5px; outline:none; cursor:pointer;">
-          <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:9px; color:#999;">
-            <span>Low</span><span>Recommended</span><span>High</span>
-          </div>
-        </div>
-
-        <!-- Format Selection -->
-        <div style="margin-bottom:12px;">
-          <label style="font-size:12px; font-weight:600; color:#19325d; display:block; margin-bottom:8px;">Output Format</label>
-          <div style="display:grid; grid-template-columns: repeat(${formatOptions.length + 1}, 1fr); gap:6px;">
-            <button class="bulk-format-btn spa-btn" data-format="keep-original" style="padding:8px; border:2px solid #fb741c; background:rgba(251,116,28,0.1); border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; text-transform:uppercase;">
-              Keep Original
-            </button>
-            ${formatOptions
-              .map(
-                (fmt, i) => `
-              <button class="bulk-format-btn spa-btn" data-format="${fmt}"
-                style="padding:8px; border:2px solid rgba(0,0,0,0.1); background:white; border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; text-transform:uppercase;">
-                ${fmt}
-              </button>
-            `
-              )
-              .join("")}
-          </div>
-          <div style="font-size:9px; color:#666; margin-top:6px;">
-            💡 <strong>"Keep Original"</strong> will maintain each image's current format
-          </div>
-        </div>
-      </div>
-
-
-      <!-- Image List -->
+      <!-- Quality Slider -->
       <div style="margin-bottom:16px;">
-        <div style="font-size:13px; font-weight:700; color:#19325d; margin-bottom:10px;">
-          📋 Critical Images (${images.length})
+        <label style="display:block; margin-bottom:8px; font-weight:600; font-size:12px; color:#19325d;">
+          Quality <span id="bulkQualityValue" style="color:#fb741c;">${userSettings.defaultQuality}</span>
+        </label>
+        <input type="range" id="bulkQualitySlider" min="10" max="100" value="${userSettings.defaultQuality}" step="5"
+          style="width:100%; height:6px; border-radius:5px; outline:none; cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:9px; color:#999;">
+          <span>Low</span><span>Recommended</span><span>High</span>
         </div>
-        <div id="bulkImageList" style="max-height:350px; overflow-y:auto; padding-right:8px;">
-          ${images
-            .map(
-              (img, index) => {
-                const filename = img.src.split("/").pop().split("?")[0];
-                const format = (img.src.split(".").pop().split("?")[0] || "").toLowerCase();
-                return `
-                <div class="spa-bulk-item" data-index="${index}">
-                  <div class="spa-bulk-header">
-                    <div style="display:flex; align-items:center; gap:10px; flex:1;">
-                      <span class="spa-bulk-expand-icon">▶</span>
-                      <div style="flex:1; min-width:0;">
-                        <div style="font-size:11px; font-weight:600; color:#19325d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${filename}</div>
-                        <div style="font-size:9px; color:#666;">${formatBytes(img.size)} • ${format.toUpperCase()}</div>
-                      </div>
-                    </div>
-                    <span class="spa-badge" style="background:#e74c3c; color:white; font-size:9px;">CRITICAL</span>
-                  </div>
-                  <div class="spa-bulk-preview">
-                    <div class="spa-bulk-preview-content">
-                      <img src="${img.src}" alt="${filename}" onerror="this.parentElement.innerHTML='<div style=\\'color:#999;font-size:11px;\\'>Preview unavailable</div>'">
-                    </div>
-                  </div>
+      </div>
+
+      <!-- Format Selection -->
+      <div>
+        <label style="font-size:12px; font-weight:600; color:#19325d; display:block; margin-bottom:8px;">Output Format</label>
+        <div style="display:grid; grid-template-columns: repeat(${formatOptions.length}, 1fr); gap:6px;">
+          ${formatOptions.map((fmt, i) => `
+            <button class="bulk-format-btn spa-btn" data-format="${fmt}"
+              style="padding:8px; border:2px solid ${i === 0 ? '#fb741c' : 'rgba(0,0,0,0.1)'}; background:${i === 0 ? 'rgba(251,116,28,0.1)' : 'white'}; border-radius:6px; cursor:pointer; font-size:11px; font-weight:600; text-transform:uppercase;">
+              ${fmt}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Image List -->
+    <div style="margin-bottom:16px;">
+      <div style="font-size:13px; font-weight:700; color:#19325d; margin-bottom:10px;">Critical Images (${images.length})</div>
+      <div id="bulkImageList" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; max-height:400px; overflow-y:auto; padding:8px;">
+        ${images.map((img, index) => {
+          const filename = img.src.split('/').pop().split('?')[0];
+          const format = img.src.split('.').pop().split('?')[0].toLowerCase();
+          return `
+            <div class="spa-bulk-item" data-index="${index}" style="border:1px solid rgba(0,0,0,0.1); border-radius:8px; overflow:hidden; background:white; cursor:pointer; transition:all 0.2s;">
+              <div style="aspect-ratio:16/9; overflow:hidden; background:#f5f5f5; position:relative;">
+                <img src="${img.src}" alt="${filename}" style="width:100%; height:100%; object-fit:cover;">
+                <div style="position:absolute; top:4px; right:4px; background:rgba(231,76,60,0.9); color:white; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:700;">CRITICAL</div>
+              </div>
+              <div style="padding:8px;">
+                <div style="font-size:10px; font-weight:600; color:#19325d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px;" title="${filename}">${filename}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:9px; color:#666;">
+                  <span>${formatBytes(img.size)}</span>
+                  <span style="text-transform:uppercase; font-weight:600;">${format}</span>
                 </div>
-              `;
-              }
-            )
-            .join("")}
-        </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
       </div>
+    </div>
 
-      <!-- Action Buttons -->
-      <div style="display:flex; gap:12px; justify-content:flex-end;">
-        <button class="close-bulk-modal spa-btn" style="padding:12px 24px; background:linear-gradient(135deg,#95a5a6,#7f8c8d); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600;">
-          Cancel
-        </button>
-        <button id="startBulkCompress" class="spa-btn" style="padding:12px 24px; background:linear-gradient(135deg,#2ecc71,#27ae60); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600;">
-          💾 Download All (${images.length})
-        </button>
+    <!-- Progress -->
+    <div id="bulkProgressSection" style="display:none; margin-bottom:16px; padding:12px; background:rgba(52,152,219,0.1); border-radius:8px;">
+      <div style="font-size:12px; color:#19325d; margin-bottom:8px; font-weight:600;">Processing: <span id="bulkProgressText">0 / ${images.length}</span></div>
+      <div class="spa-progress">
+        <div id="bulkProgressBar" class="spa-progress-bar" style="width:0%;"></div>
       </div>
+    </div>
 
-      <!-- Progress Section (hidden initially) -->
-      <div id="bulkProgressSection" style="display:none; margin-top:16px; padding:16px; background:rgba(102,126,234,0.1); border-radius:8px;">
-        <div style="font-size:12px; font-weight:600; color:#667eea; margin-bottom:8px;">
-          Compressing: <span id="bulkProgressText">0 / ${images.length}</span>
-        </div>
-        <div class="spa-progress" style="width:100%; height:8px;">
-          <div id="bulkProgressBar" class="spa-progress-bar" style="width:0;"></div>
-        </div>
-      </div>
-    `;
+    <!-- Action Buttons -->
+    <div style="display:flex; gap:12px; justify-content:flex-end;">
+      <button id="cancelBulkBtn" class="spa-btn" style="padding:12px 24px; background:linear-gradient(135deg,#95a5a6,#7f8c8d); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600;">
+        Cancel
+      </button>
+      <button id="startBulkCompress" class="spa-btn" style="padding:12px 24px; background:linear-gradient(135deg,#2ecc71,#27ae60); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600;">
+        Download All (${images.length})
+      </button>
+    </div>
+  `;
 
-      backdrop.appendChild(modal);
-    document.body.appendChild(backdrop);
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
 
-    // State management
-    let selectedFormat = "keep-original";
-    let selectedQuality = userSettings.defaultQuality;
+  // Initialize variables AFTER modal is in DOM
+  let selectedFormat = formatOptions[0]; // WebP if available, otherwise JPEG
+  let selectedQuality = userSettings.defaultQuality;
 
-    // Calculate total original size
-    const totalOriginalSize = images.reduce((sum, img) => sum + (img.size || 0), 0);
+  const qualitySlider = modal.querySelector("#bulkQualitySlider");
+  const qualityValue = modal.querySelector("#bulkQualityValue");
 
-    // Estimation function
-    function updateEstimatedSavings() {
-      const qualityFactor = selectedQuality / 100;
-      let estimatedFactor = 0.4; // Default 60% reduction
+  // Quality slider handler
+  qualitySlider.addEventListener("input", (e) => {
+    selectedQuality = parseInt(e.target.value);
+    qualityValue.textContent = selectedQuality;
+  });
 
-      // Adjust estimation based on quality
-      if (qualityFactor >= 0.9) {
-        estimatedFactor = 0.2; // 20% reduction at high quality
-      } else if (qualityFactor >= 0.75) {
-        estimatedFactor = 0.35; // 35% reduction at good quality
-      } else if (qualityFactor >= 0.5) {
-        estimatedFactor = 0.5; // 50% reduction at medium quality
-      } else {
-        estimatedFactor = 0.7; // 70% reduction at low quality
-      }
+  // Format button handlers
+  modal.querySelectorAll(".bulk-format-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      modal.querySelectorAll(".bulk-format-btn").forEach(b => {
+        b.style.border = "2px solid rgba(0,0,0,0.1)";
+        b.style.background = "white";
+      });
+      this.style.border = "2px solid #fb741c";
+      this.style.background = "rgba(251,116,28,0.1)";
+      selectedFormat = this.dataset.format;
+    });
+  });
 
-      // Additional reduction for WebP
-      if (selectedFormat === "webp") {
-        estimatedFactor += 0.1; // WebP saves extra 10%
-      }
+  // Close button
+  modal.querySelector("#closeBulkModal").addEventListener("click", () => {
+    document.body.removeChild(backdrop);
+  });
 
-      const estimatedCompressedSize = totalOriginalSize * (1 - estimatedFactor);
-      const estimatedSavings = totalOriginalSize - estimatedCompressedSize;
-      const savingsPercent = (estimatedSavings / totalOriginalSize) * 100;
+  // Cancel button
+  modal.querySelector("#cancelBulkBtn").addEventListener("click", () => {
+    document.body.removeChild(backdrop);
+  });
 
-      const savingsDisplay = modal.querySelector("#bulkEstimatedSavings");
-      if (savingsDisplay) {
-        savingsDisplay.textContent = `~${formatBytes(estimatedSavings)} (${savingsPercent.toFixed(0)}%)`;
+  backdrop.addEventListener("click", (e) => {
+    if (e.target === backdrop) document.body.removeChild(backdrop);
+  });
+
+  // Download all button
+  modal.querySelector("#startBulkCompress").addEventListener("click", async () => {
+    const startBtn = modal.querySelector("#startBulkCompress");
+    const progressSection = modal.querySelector("#bulkProgressSection");
+    const progressBar = modal.querySelector("#bulkProgressBar");
+    const progressText = modal.querySelector("#bulkProgressText");
+
+    startBtn.disabled = true;
+    startBtn.textContent = "⏳ Processing...";
+    progressSection.style.display = "block";
+
+    let processed = 0;
+    const quality = selectedQuality / 100;
+
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      progressText.textContent = `${processed + 1} / ${images.length}`;
+      progressBar.style.width = `${((processed + 1) / images.length) * 100}%`;
+
+      try {
+        let loadedImage;
+        if (img.type === "img" && img.element) {
+          loadedImage = img.element;
+        } else {
+          loadedImage = await new Promise((resolve, reject) => {
+            const tempImg = new Image();
+            tempImg.crossOrigin = "anonymous";
+            tempImg.onload = () => resolve(tempImg);
+            tempImg.onerror = () => reject("Load failed");
+            tempImg.src = img.src;
+          });
+        }
+
+        const blob = await compressImage(
+          loadedImage,
+          quality,
+          loadedImage.naturalWidth,
+          loadedImage.naturalHeight,
+          selectedFormat
+        );
+
+        // Only download if actually smaller
+        if (blob.size >= img.size) {
+          processed++;
+          continue;
+        }
+
+        const filename = (img.src.split("/").pop() || "image").split("?")[0].replace(/\.[^.]*$/, "");
+        const ext = selectedFormat === "jpeg" ? "jpg" : selectedFormat;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `compressed-${filename}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        processed++;
+        await new Promise(r => setTimeout(r, 100));
+      } catch (error) {
+        console.error(`Failed: ${img.src}`, error);
+        processed++;
       }
     }
 
-    // Quality slider handler
-    const qualitySlider = modal.querySelector("#bulkQualitySlider");
-    const qualityValue = modal.querySelector("#bulkQualityValue");
-    qualitySlider.addEventListener("input", (e) => {
-      selectedQuality = parseInt(e.target.value, 10);
-      qualityValue.textContent = String(selectedQuality);
-      updateEstimatedSavings(); // ← Update estimate when quality changes
-    });
-
-
-        // Format selection handler
-    modal.querySelectorAll(".bulk-format-btn").forEach((btn) => {
-      btn.addEventListener("click", function () {
-        modal.querySelectorAll(".bulk-format-btn").forEach((b) => {
-          b.style.border = "2px solid rgba(0,0,0,0.1)";
-          b.style.background = "white";
-        });
-        this.style.border = "2px solid #fb741c";
-        this.style.background = "rgba(251,116,28,0.1)";
-        selectedFormat = this.dataset.format;
-        updateEstimatedSavings(); // ← Update estimate when format changes
-      });
-    });
-
-    // Initial estimation
-    updateEstimatedSavings();
-
-
-    // Expandable list handler
-    modal.querySelectorAll(".spa-bulk-item").forEach((item) => {
-      const header = item.querySelector(".spa-bulk-header");
-      header.addEventListener("click", () => {
-        item.classList.toggle("expanded");
-      });
-    });
-
-    // Close handlers
-    modal.querySelectorAll(".close-bulk-modal").forEach((btn) => {
-      btn.addEventListener("click", () => document.body.removeChild(backdrop));
-    });
-
-    backdrop.addEventListener("click", (e) => {
-      if (e.target === backdrop) document.body.removeChild(backdrop);
-    });
-
-    // Bulk compress and download
-    modal.querySelector("#startBulkCompress").addEventListener("click", async () => {
-      const startBtn = modal.querySelector("#startBulkCompress");
-      const progressSection = modal.querySelector("#bulkProgressSection");
-      const progressBar = modal.querySelector("#bulkProgressBar");
-      const progressText = modal.querySelector("#bulkProgressText");
-
-      startBtn.disabled = true;
-      startBtn.textContent = "⏳ Processing...";
-      progressSection.style.display = "block";
-
-      let processed = 0;
-      const quality = selectedQuality / 100;
-
-      for (let i = 0; i < images.length; i++) {
-        const img = images[i];
-        progressText.textContent = `${processed + 1} / ${images.length}`;
-        progressBar.style.width = `${((processed + 1) / images.length) * 100}%`;
-
-        try {
-          // Load image
-          let loadedImage;
-          if (img.type === "img" && img.element) {
-            loadedImage = img.element;
-          } else {
-            loadedImage = await new Promise((resolve, reject) => {
-              const tempImg = new Image();
-              tempImg.crossOrigin = "anonymous";
-              tempImg.onload = () => resolve(tempImg);
-              tempImg.onerror = () => reject("Load failed");
-              tempImg.src = img.src;
-            });
-          }
-
-                     // Determine format
-          let outputFormat = selectedFormat;
-          if (selectedFormat === "keep-original") {
-            const originalFormat = (img.src.split(".").pop().split("?")[0] || "").toLowerCase();
-
-            // Map to valid output formats
-            if (originalFormat === "jpg" || originalFormat === "jpeg") {
-              outputFormat = "jpeg";
-            } else if (originalFormat === "png") {
-              outputFormat = "png";
-            } else if (originalFormat === "webp" && formats.webp) {
-              outputFormat = "webp";
-            } else {
-              // Fallback: use jpeg for unknown formats
-              outputFormat = "jpeg";
-            }
-
-
-          }
-
-
-        // Compress
-          const blob = await compressImage(
-            loadedImage,
-            quality,
-            loadedImage.naturalWidth,
-            loadedImage.naturalHeight,
-            outputFormat
-          );
-
-                    // Size comparison with logging
-          const originalSize = img.size;
-          const compressedSize = blob.size;
-          const sizeDiff = originalSize - compressedSize;
-          const percentChange = ((sizeDiff / originalSize) * 100).toFixed(1);
-
-
-
-          // For "keep-original": Allow downloads if compressed or up to 5% larger (re-encoding tolerance)
-          // For format changes: Only if actually smaller
-          if (selectedFormat === "keep-original") {
-            if (compressedSize > originalSize * 1.05) {
-
-              processed++;
-              continue;
-            }
-          } else {
-            if (compressedSize >= originalSize) {
-
-              processed++;
-              continue;
-            }
-          }
-
-
-
-
-          // Download
-          const filename = (img.src.split("/").pop() || "image").split("?")[0].replace(/\.[^.]*$/, "");
-          const ext = outputFormat === "jpeg" ? "jpg" : outputFormat;
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `compressed-${filename}.${ext}`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-
-          processed++;
-          await new Promise((r) => setTimeout(r, 100)); // Small delay between downloads
-        } catch (error) {
-          console.error(`Failed to compress ${img.src}:`, error);
-          processed++;
-        }
-      }
-
-            const skipped = images.length - processed;
-      if (skipped > 0) {
-        showToast(`✅ ${processed} images compressed! ${skipped} skipped (already optimal)`, "success");
-      } else {
-        showToast(`✅ ${processed} images compressed and downloaded!`, "success");
-      }
-
-      setTimeout(() => document.body.removeChild(backdrop), 1500);
-    });
-  }
+    showToast(`✅ ${processed} images compressed and downloaded!`, "success");
+    setTimeout(() => document.body.removeChild(backdrop), 1500);
+  });
+}
 
 
   function exportReport(scoreData) {
@@ -3946,6 +3834,7 @@ function checkForScriptUpdates() {
         </button>`
             : ""
         }
+        
       </div>
 
       <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(0,0,0,0.08); font-size:8px; color:#999; text-align:center;">
@@ -4107,6 +3996,11 @@ function checkForScriptUpdates() {
 // ============================================================================
 
 function createToolbar() {
+  // Do not inject toolbar in iframes/subframes
+  if (window.top !== window.self) {
+    // Inside iframe, skip toolbar injection
+    return;
+  }
   const existingBtn = document.getElementById("spaToggleBtn");
   const existingToolbar = document.getElementById("spaToolbar");
   if (existingBtn) existingBtn.remove();
@@ -4207,16 +4101,16 @@ function createToolbar() {
       <button id="historyBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
         <span>🕒</span><span style="flex:1">View History</span>
       </button>
-      <button id="settingsBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
+      <!--<button id="settingsBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
         <span>⚙️</span><span style="flex:1">Settings</span>
-      </button>
+      </button>-->
       <button id="blockAnalysisBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
         <span>🔍</span><span style="flex:1">Block Analysis</span>
       </button>
       <button id="legendBtn" class="spa-btn" style="padding:10px 12px; background:white; color:#19325d; border:2px solid rgba(0,0,0,0.08); border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px;">
         <span>❓</span><span style="flex:1">Icon Legend</span>
       </button>
-      
+
       <!-- NEW: Check for Updates Button -->
       <button id="checkUpdatesBtn" class="spa-btn" style="padding:10px 12px; background:#fb741c; color:white; border:none; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600; width:100%; text-align:left; display:flex; align-items:center; gap:8px; transition:all 0.3s ease;">
         <span>🔄</span><span style="flex:1">Check for Updates</span>
@@ -4331,7 +4225,7 @@ function createToolbar() {
   toolbar.querySelector("#gtmBtn").addEventListener("click", () => showGTMAnalysisModal());
   document.getElementById('videoOptimizationBtn')?.addEventListener('click', showVideoOptimizationModal);
   toolbar.querySelector("#historyBtn").addEventListener("click", () => showHistoryModal());
-  toolbar.querySelector("#settingsBtn").addEventListener("click", () => showSettingsModal());
+  /*toolbar.querySelector("#settingsBtn").addEventListener("click", () => showSettingsModal());*/
   toolbar.querySelector("#legendBtn").addEventListener("click", () => showIconLegendModal());
   toolbar.querySelector("#blockAnalysisBtn").addEventListener("click", () => showBlockAnalysisModal());
 
@@ -4341,7 +4235,7 @@ function createToolbar() {
     checkUpdatesBtn.addEventListener('click', () => {
       const currentVersion = '5.3'; // Match your @version
       const downloadUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
-      
+
       // If button is in "Update Available" state, open download link
       if (checkUpdatesBtn.getAttribute('data-update-ready') === 'true') {
         window.open(downloadUrl, '_blank');
@@ -4349,23 +4243,23 @@ function createToolbar() {
         showToast('Opening update page...', 'info');
         return;
       }
-      
+
       // Manual check
       checkUpdatesBtn.style.opacity = '0.6';
       checkUpdatesBtn.style.pointerEvents = 'none';
       checkUpdatesBtn.innerHTML = '<span>⏳</span><span style="flex:1">Checking...</span>';
-      
+
       GM_xmlhttpRequest({
         method: 'GET',
         url: `${downloadUrl}?t=${Date.now()}`,
         onload: function(response) {
           checkUpdatesBtn.style.opacity = '1';
           checkUpdatesBtn.style.pointerEvents = 'auto';
-          
+
           if (response.status === 200) {
             const match = response.responseText.match(/@version\s+([\d\.\-\w]+)/);
             const latestVersion = match ? match[1] : null;
-            
+
             if (latestVersion && latestVersion !== currentVersion) {
               // UPDATE AVAILABLE
               checkUpdatesBtn.innerHTML = `<span>✨</span><span style="flex:1">Update Available (v${latestVersion})</span>`;
@@ -4381,7 +4275,7 @@ function createToolbar() {
               checkUpdatesBtn.setAttribute('data-update-ready', 'false');
               showToast(`You're on the latest version!`, 'info');
             }
-            
+
             // Reset after 4 seconds
             setTimeout(() => {
               checkUpdatesBtn.innerHTML = '<span>🔄</span><span style="flex:1">Check for Updates</span>';
@@ -4401,7 +4295,7 @@ function createToolbar() {
           checkUpdatesBtn.setAttribute('data-update-ready', 'false');
           showToast('Update check failed!', 'error');
           console.error('Update check error:', err);
-          
+
           // Reset after 3 seconds
           setTimeout(() => {
             checkUpdatesBtn.innerHTML = '<span>🔄</span><span style="flex:1">Check for Updates</span>';
@@ -5323,174 +5217,182 @@ function createToolbar() {
   }
 
 
-    async function showGTMAnalysisModal() {
-    const backdrop = document.createElement("div");
-    backdrop.style.cssText = `
-      position: fixed; top: 0; left: 0; width: 100%;
-      height: 100%; background: rgba(0,0,0,0.8); z-index: 999998;
-      display: flex; align-items: center; justify-content: center;
-      padding: 20px; backdrop-filter: blur(8px); overflow-y: auto;
-    `;
+  async function showGTMAnalysisModal() {
+  const backdrop = document.createElement("div");
+  backdrop.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%;
+    height: 100%; background: rgba(0,0,0,0.8); z-index: 999998;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; backdrop-filter: blur(8px); overflow-y: auto;
+  `;
 
-    const modal = document.createElement("div");
-    modal.style.cssText = `
-      background: white; border-radius: 16px; max-width: 900px;
-      width: 100%; max-height: 85vh; overflow-y: auto;
-      padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      animation: slideIn 0.3s; margin: auto; pointer-events: auto;
-    `;
+  const modal = document.createElement("div");
+  modal.style.cssText = `
+    background: white; border-radius: 16px; max-width: 900px;
+    width: 100%; max-height: 85vh; overflow-y: auto;
+    padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: slideIn 0.3s; margin: auto; pointer-events: auto;
+    font-family: Arial, sans-serif;
+  `;
 
+  modal.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+      <h2 style="margin:0; color:#19325d; font-size:22px;">🏷️ GTM Deep Analysis Report</h2>
+      <button id="gtmHeaderClose" style="background:none; border:none; font-size:28px; cursor:pointer; color:#999; transition:color 0.2s; padding:0; width:30px; height:30px;">✕</button>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:center; padding:40px;">
+      <div style="text-align:center;">
+        <div class="spa-progress" style="width:200px; margin:0 auto 20px;">
+          <div class="spa-progress-bar" style="width:50%; animation:pulse 1s infinite;"></div>
+        </div>
+        <div style="color:#19325d; font-weight:600;">Analyzing GTM Containers...</div>
+      </div>
+    </div>
+  `;
+
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+
+  // Detect GTM containers
+  const scripts = document.querySelectorAll("script[src*='googletagmanager.com/gtm.js']");
+  const containers = [];
+  scripts.forEach(script => {
+    const match = script.src.match(/[?&]id=(GTM-[A-Z0-9\-]+)/);
+    if (match) {
+      containers.push({ id: match[1] });
+    }
+  });
+
+  if (containers.length === 0) {
     modal.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-        <h2 style="margin:0; color:#19325d; font-size:22px;">🏷️ GTM Deep Analysis Report</h2>
-        <button id="gtmHeaderClose" style="background:none; border:none; font-size:28px; cursor:pointer; color:#999; transition:color 0.2s; padding:0; width:30px; height:30px;" onmouseover="this.style.color='#e74c3c'" onmouseout="this.style.color='#999';">✕</button>
-      </div>
-
-      <div style="display:flex; align-items:center; justify-content:center; padding:40px;">
-        <div style="text-align:center;">
-          <div class="spa-progress" style="width:200px; margin:0 auto 20px;">
-            <div class="spa-progress-bar" style="width:50%; animation:pulse 1s infinite;"></div>
-          </div>
-          <div style="color:#19325d; font-weight:600;">Analyzing GTM Containers...</div>
-        </div>
+      <div style="text-align:center; padding:40px;">
+        <h2 style="color:#666;">No GTM Containers Found</h2>
+        <p style="color:#999;">This page doesn't appear to have Google Tag Manager installed.</p>
+        <button id="gtmMainCloseBtn" style="padding:10px 20px; background:#667eea; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Close</button>
       </div>
     `;
-
-    backdrop.appendChild(modal);
-    document.body.appendChild(backdrop);
-
-    // Get GTM containers
-    const scripts = document.querySelectorAll("script[src*='googletagmanager.com/gtm.js']");
-    const containers = [];
-
-    scripts.forEach(script => {
-      const match = script.src.match(/[?&]id=(GTM-[A-Z0-9\-]+)/);
-      if (match) {
-        containers.push({ id: match[1] });
+    setTimeout(() => {
+      const closeBtn = modal.querySelector("#gtmMainCloseBtn");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+          backdrop.remove();
+        });
       }
-    });
+    }, 50);
+    return;
+  }
 
-    // If no containers found
-    if (containers.length === 0) {
-      modal.innerHTML = `
-        <div style="text-align:center; padding:40px;">
-          <h2 style="color:#666;">No GTM Containers Found</h2>
-          <p style="color:#999;">This page doesn't appear to have Google Tag Manager installed.</p>
-          <button id="gtmMainCloseBtn" style="padding:10px 20px; background:#667eea; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Close</button>
-        </div>
-      `;
+  let reportHTML = `
+    <div style="padding:16px; background:linear-gradient(135deg,#667eea,#764ba2); border-radius:10px; color:white; margin-bottom:24px;">
+      <div style="font-size:12px; opacity:0.9;">Containers Found: ${containers.length}</div>
+    </div>
 
-      setTimeout(() => {
-        const closeBtn = modal.querySelector("#gtmMainCloseBtn");
-        if (closeBtn) {
-          closeBtn.addEventListener("click", () => {
-            backdrop.remove();
-          });
-        }
-      }, 50);
-      return;
-    }
+    <div style="display: flex; flex-direction: column; gap: 16px; max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+  `;
 
-    // Build report with containers
-    let reportHTML = `
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-bottom:24px;">
-        <div style="padding:16px; background:linear-gradient(135deg,#667eea,#764ba2); border-radius:10px; color:white;">
-          <div style="font-size:12px; opacity:0.9; margin-bottom:4px;">Containers Found</div>
-          <div style="font-size:28px; font-weight:700;">${containers.length}</div>
-        </div>
-      </div>
+  for (const container of containers) {
+    const analysis = await fetchGTMScriptAnalysis(container.id);
 
-      <div style="margin-bottom:20px;">
-        <h3 style="margin:0 0 12px 0; font-size:14px; font-weight:700; color:#19325d;">📌 Containers List</h3>
-        <div style="display:grid; gap:8px;">
-    `;
-
-    // Fetch analysis for each container
-    for (const container of containers) {
-      const analysis = await fetchGTMScriptAnalysis(container.id);
-
-      reportHTML += `
-        <div style="background:#f8f9fa; padding:12px; border-radius:8px; border-left:3px solid #fb741c; display:flex; justify-content:space-between; align-items:center; gap:8px;">
-          <div style="flex:1; min-width:0;">
-            <div style="font-size:10px; color:#666; margin-bottom:2px;">Container ID</div>
-            <div style="font-size:11px; font-weight:600; color:#19325d; word-break:break-all;">${container.id}</div>
-            <div style="font-size:9px; color:#999; margin-top:2px;">Source: ${analysis.source}</div>
-          </div>
-          <div style="display:flex; gap:4px; flex-shrink:0;">
-            <button class="copy-gtm-id" data-id="${container.id}" style="padding:6px 8px; background:white; color:#19325d; border:1px solid #ddd; border-radius:4px; cursor:pointer; font-size:10px; font-weight:600; white-space:nowrap;">
-              📋 Copy ID
-            </button>
-            <button class="more-details-gtm" data-analysis='${JSON.stringify(analysis).replace(/'/g, "\\'")}' style="padding:6px 8px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; border-radius:4px; cursor:pointer; font-size:10px; font-weight:600; white-space:nowrap;">
-              📋 More Details
-            </button>
-          </div>
-        </div>
-      `;
-    }
+    const vendorNames = (analysis.vendors || []).map(v => v.name).join(', ') || 'No vendors detected';
+    const confidence = analysis.confidence != null ? analysis.confidence : 'N/A';
+    const category = analysis.vendors?.[0]?.category ?? 'Unknown';
+    const source = analysis.source || 'Unknown';
+    const vendorTitle = vendorNames.length > 100 ? vendorNames.slice(0, 100) + "..." : vendorNames;
 
     reportHTML += `
-        </div>
-      </div>
+      <div style="display: flex; flex-direction: row; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; gap: 12px;">
 
-      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px; padding-top:16px; border-top:1px solid #eee;">
-        <button id="gtmMainCloseBtn" style="padding:10px 20px; background:#95a5a6; color:white; border:none; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600;">
-          Close
-        </button>
+        <!-- Section 1: GTM, Vendor, Category -->
+        <div style="flex: 3; min-width: 0;">
+          <div style="font-size: 10px; color: #334155; margin-bottom: 4px;">Container ID</div>
+          <div style="font-size: 14px; font-weight: 700; color: #1e293b; word-break: break-word;">${container.id}</div>
+          <div title="${vendorTitle}" style="font-size: 12px; color: #475569; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            Vendors: ${vendorNames}<br/>
+            Category: ${category}
+          </div>
+        </div>
+
+        <!-- Section 2: Source & Confidence -->
+        <div style="flex: 2; color: #22c55e; font-weight: 600; border-left: 1px solid #94a3b8; padding-left: 12px; min-width: 0;">
+          <div style="font-size: 12px; margin-bottom: 4px;">Source Detected</div>
+          <div style="font-size: 14px; margin-bottom: 12px;">${source}</div>
+          <div style="font-size: 12px;">Confidence: <span style="font-weight: 700;">${confidence}%</span></div>
+        </div>
+
+        <!-- Section 3: Action Buttons -->
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+          <button class="copy-gtm-id spa-btn" data-id="${container.id}" style="padding: 6px 10px; background: white; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+            📋 Copy ID
+          </button>
+          <button class="more-details-gtm spa-btn" data-analysis='${JSON.stringify(analysis).replace(/'/g, "\\'")}' style="padding: 6px 10px; background: linear-gradient(135deg,#22c55e,#16a34a); color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+            📋 More Details
+          </button>
+        </div>
+
       </div>
     `;
+  }
 
-    modal.innerHTML = reportHTML;
+  reportHTML += `
+    </div>
 
-    // Close button at bottom
-    const closeBtn = modal.querySelector("#gtmMainCloseBtn");
-    if (closeBtn) {
-      closeBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        backdrop.remove();
-      });
-    }
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+      <button id="gtmMainCloseBtn" style="padding: 10px 20px; background: #64748b; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;">Close</button>
+    </div>
+  `;
 
-    // Close button in header
-    const headerCloseBtn = modal.querySelector("#gtmHeaderClose");
-    if (headerCloseBtn) {
-      headerCloseBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        backdrop.remove();
-      });
-    }
+  modal.innerHTML = reportHTML;
 
-    // Add event listeners to Copy ID buttons
-    modal.querySelectorAll(".copy-gtm-id").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const id = btn.getAttribute("data-id");
-        navigator.clipboard.writeText(id).then(() => {
-          showToast("GTM ID copied!", "success");
-        });
-      });
-    });
-
-    // Add event listeners to More Details buttons
-    modal.querySelectorAll(".more-details-gtm").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const analysis = JSON.parse(btn.getAttribute("data-analysis"));
-        showGTMDetailsModal(analysis);
-      });
-    });
-
-    // Close on backdrop click
-    backdrop.addEventListener("click", (e) => {
-      if (e.target === backdrop) {
-        backdrop.remove();
-      }
-    });
-
-    // Prevent modal clicks from closing backdrop
-    modal.addEventListener("click", (e) => {
+  // Close buttons event listeners
+  const closeBtn = modal.querySelector("#gtmMainCloseBtn");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", e => {
       e.stopPropagation();
+      backdrop.remove();
     });
   }
+
+  const headerCloseBtn = modal.querySelector("#gtmHeaderClose");
+  if (headerCloseBtn) {
+    headerCloseBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      backdrop.remove();
+    });
+  }
+
+  // Copy ID buttons event listeners
+  modal.querySelectorAll(".copy-gtm-id").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const id = btn.getAttribute("data-id");
+      navigator.clipboard.writeText(id).then(() => {
+        showToast("GTM ID copied!", "success");
+      });
+    });
+  });
+
+  // More Details buttons event listeners
+  modal.querySelectorAll(".more-details-gtm").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const analysis = JSON.parse(btn.getAttribute("data-analysis"));
+      showGTMDetailsModal(analysis);
+    });
+  });
+
+  // Backdrop click closes modal
+  backdrop.addEventListener("click", e => {
+    if (e.target === backdrop) {
+      backdrop.remove();
+    }
+  });
+
+  // Prevent clicks inside modal from closing backdrop
+  modal.addEventListener("click", e => {
+    e.stopPropagation();
+  });
+}
 
 
   // ============================================================================
@@ -5614,14 +5516,21 @@ function createToolbar() {
               <div style="font-size:11px; font-weight:600; color:#19325d; word-break:break-all; margin-bottom:8px;">${analysis.src.substring(0, 80)}...</div>
               <div style="font-size:10px; color:#999;">Display: ${Math.round(analysis.dimensions.display.width)}x${Math.round(analysis.dimensions.display.height)}px</div>
             </div>
-            ${analysis.thumbnail ? `
-              <div style="margin-left:12px;">
-                <img src="${analysis.thumbnail}" style="width:120px; height:auto; border-radius:4px; border:1px solid rgba(0,0,0,0.1);" />
-                <button class="download-thumb" data-thumb="${analysis.thumbnail}" data-idx="${idx}" style="margin-top:4px; padding:4px 8px; background:#667eea; color:white; border:none; border-radius:3px; cursor:pointer; font-size:9px; font-weight:600; width:100%;">
-                  💾 Download
-                </button>
-              </div>
-            ` : ''}
+           ${analysis.thumbnail ? `
+  <div style="margin-left:12px; display:flex; flex-direction: column; gap: 6px; width: 140px;">
+    <img src="${analysis.thumbnail}" style="width: 120px; height: auto; border-radius: 4px; border: 1px solid rgba(0,0,0,0.1);" />
+    <div style="display: flex; gap: 6px;">
+      <button class="download-thumb" data-thumb="${analysis.thumbnail}" data-idx="${idx}" 
+        style="flex: 1; padding: 6px 8px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">
+        💾 Download
+      </button>
+      <button class="custom-snapshot-btn spa-btn" data-src="${analysis.src}" 
+        style="flex: 1; padding: 6px 8px; background: #2d8de0; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;">
+        📸 Snapshot
+      </button>
+    </div>
+  </div>
+` : ''}
           </div>
 
           <div style="margin-bottom:12px;">
@@ -5687,6 +5596,19 @@ function createToolbar() {
         showToast('Thumbnail downloaded!', 'success');
       });
     });
+
+    modal.querySelectorAll('.custom-snapshot-btn').forEach(button => {
+  button.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const videoSrc = button.getAttribute('data-src');
+    if (videoSrc) {
+      showCustomSnapshotModal(videoSrc);
+    } else {
+      showToast('Video source not found!', 'error');
+    }
+  });
+});
+
 
     backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop) backdrop.remove();
@@ -5764,6 +5686,74 @@ function createToolbar() {
       if (e.target === backdrop) document.body.removeChild(backdrop);
     });
   }
+
+  function showCustomSnapshotModal(videoSrc) {
+  const backdrop = document.createElement('div');
+  backdrop.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75); display: flex; justify-content: center; align-items: center;
+    z-index: 999999; padding: 20px; backdrop-filter: blur(8px);
+  `;
+
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    background: white; border-radius: 16px; width: 90%; max-width: 800px;
+    max-height: 80vh; display: flex; flex-direction: column; padding: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3); font-family: Arial, sans-serif;
+  `;
+
+  modal.innerHTML = `
+    <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 style="margin: 0; font-size: 20px; color: #19325d;">📸 Custom Snapshot</h2>
+      <button id="closeSnapshotModal" style="font-size: 24px; background: none; border: none; cursor: pointer; color: #999;">×</button>
+    </div>
+    <video id="snapshotVideo" src="${videoSrc}" controls style="width: 100%; border-radius: 8px; max-height: 400px; background: black;"></video>
+    <button id="takeSnapshotBtn" style="margin-top: 12px; padding: 10px 16px; background: #2ecc71; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 16px;">
+      Take Snapshot
+    </button>
+    <div id="snapshotResult" style="margin-top: 16px; text-align: center;"></div>
+  `;
+
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+
+  const video = modal.querySelector('#snapshotVideo');
+  const takeSnapshotBtn = modal.querySelector('#takeSnapshotBtn');
+  const resultDiv = modal.querySelector('#snapshotResult');
+  const closeBtn = modal.querySelector('#closeSnapshotModal');
+
+  takeSnapshotBtn.addEventListener('click', () => {
+    // Create canvas same size as video display size
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || video.clientWidth;
+    canvas.height = video.videoHeight || video.clientHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+
+      // Show preview image with download link
+      resultDiv.innerHTML = `
+        <img src="${url}" alt="Snapshot" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);" />
+        <br/>
+        <a href="${url}" download="snapshot-${Date.now()}.png" style="margin-top: 8px; display: inline-block; font-weight: 700; color: #2ecc71; cursor: pointer;">Download Snapshot</a>
+      `;
+    }, 'image/png');
+  });
+
+  closeBtn.addEventListener('click', () => {
+    backdrop.remove();
+  });
+
+  backdrop.addEventListener('click', e => {
+    if (e.target === backdrop) backdrop.remove();
+  });
+
+  modal.addEventListener('click', e => e.stopPropagation());
+}
+
 
      // ============================================================================
   // SECTION 24: MAP CONVERSION MODAL
@@ -6053,6 +6043,216 @@ function createToolbar() {
     });
   }
 
+// ============================================================================
+// SECTION 25: VIDEO CUSTOM SNAPSHOT TOOL
+// Allows users to capture any frame from a video as an image
+// ============================================================================
+
+function showCustomSnapshotModal(videoSrc) {
+  const backdrop = document.createElement('div');
+  backdrop.style.cssText = `
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 999999; display: flex; align-items: center;
+    justify-content: center; padding: 20px; backdrop-filter: blur(8px);
+  `;
+
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    background: white; border-radius: 16px; width: 90%; max-width: 1000px;
+    max-height: 90vh; overflow-y: auto; padding: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  `;
+
+  modal.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2 style="margin:0; color:#19325d; font-size:22px;">📸 Custom Video Snapshot</h2>
+      <button id="closeSnapshotModal" style="background:none; border:none; font-size:28px; cursor:pointer; color:#999;">×</button>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#667eea,#764ba2); padding:16px; border-radius:10px; margin-bottom:20px; color:white;">
+      <div style="font-size:13px; font-weight:600; margin-bottom:8px;">📋 How to Use</div>
+      <div style="font-size:12px; opacity:0.9; line-height:1.5;">
+        1. Use video controls to navigate to your desired moment<br>
+        2. Pause at the exact frame you want<br>
+        3. Click "Take Snapshot" to capture the frame<br>
+        4. Download or copy the snapshot image
+      </div>
+    </div>
+
+    <div style="position:relative; background:#000; border-radius:10px; overflow:hidden; margin-bottom:20px;">
+      <video id="snapshotVideo" src="${videoSrc}" controls style="width:100%; max-height:500px; display:block;"></video>
+      <div id="currentTime" style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.7); color:white; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600;">
+        00:00 / 00:00
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px; margin-bottom:20px;">
+      <button id="takeSnapshotBtn" class="spa-btn" style="flex:1; padding:14px 20px; background:linear-gradient(135deg,#2ecc71,#27ae60); color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:700;">
+        📸 Take Snapshot
+      </button>
+      <button id="playPauseBtn" class="spa-btn" style="padding:14px 20px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:700;">
+        ⏸ Pause
+      </button>
+    </div>
+
+    <div id="snapshotPreview" style="display:none; margin-top:20px;">
+  <div style="font-size:14px; font-weight:700; color:#19325d; margin-bottom:10px;">✅ Snapshot Captured!</div>
+  <div style="border:2px solid #2ecc71; border-radius:10px; overflow:hidden; margin-bottom:12px;">
+    <canvas id="snapshotCanvas" style="width:100%; display:block;"></canvas>
+  </div>
+  
+  <!-- Compression Slider -->
+  <div style="background:#f8f9fa; padding:16px; border-radius:8px; margin-bottom:12px; border:1px solid #ddd;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <label style="font-size:13px; font-weight:600; color:#19325d;">Image Quality</label>
+      <span id="qualityValue" style="font-size:13px; font-weight:700; color:#667eea;">85%</span>
+    </div>
+    <input type="range" id="qualitySlider" min="10" max="100" value="85" 
+      style="width:100%; height:6px; border-radius:5px; background:linear-gradient(90deg, #e74c3c 0%, #f39c12 50%, #2ecc71 100%); outline:none; cursor:pointer;">
+    <div style="display:flex; justify-content:space-between; font-size:10px; color:#999; margin-top:4px;">
+      <span>🗜️ Smallest</span>
+      <span id="estimatedSize" style="font-weight:600; color:#667eea;">~500 KB</span>
+      <span>🖼️ Best Quality</span>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:12px;">
+    <button id="downloadSnapshotBtn" class="spa-btn" style="flex:1; padding:12px 20px; background:linear-gradient(135deg,#fb741c,#ff8c42); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700;">
+      💾 Download Snapshot
+    </button>
+    <button id="copySnapshotBtn" class="spa-btn" style="flex:1; padding:12px 20px; background:linear-gradient(135deg,#3498db,#2980b9); color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700;">
+      📋 Copy to Clipboard
+    </button>
+  </div>
+</div>
+
+    <div style="margin-top:16px; padding:12px; background:rgba(52,152,219,0.1); border-left:3px solid #3498db; border-radius:6px; font-size:11px; color:#19325d;">
+      <strong>💡 Tip:</strong> For best results, pause the video at a clear, non-blurry frame. You can use frame-by-frame navigation with keyboard arrow keys if your browser supports it.
+    </div>
+  `;
+
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+
+  const video = modal.querySelector('#snapshotVideo');
+  const currentTimeDisplay = modal.querySelector('#currentTime');
+  const takeSnapshotBtn = modal.querySelector('#takeSnapshotBtn');
+  const playPauseBtn = modal.querySelector('#playPauseBtn');
+  const snapshotPreview = modal.querySelector('#snapshotPreview');
+  const canvas = modal.querySelector('#snapshotCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Update time display
+  video.addEventListener('timeupdate', () => {
+    const current = formatTime(video.currentTime);
+    const duration = formatTime(video.duration);
+    currentTimeDisplay.textContent = `${current} / ${duration}`;
+  });
+
+  // Play/Pause toggle
+  playPauseBtn.addEventListener('click', () => {
+    if (video.paused) {
+      video.play();
+      playPauseBtn.innerHTML = '⏸ Pause';
+    } else {
+      video.pause();
+      playPauseBtn.innerHTML = '▶ Play';
+    }
+  });
+
+  video.addEventListener('play', () => {
+    playPauseBtn.innerHTML = '⏸ Pause';
+  });
+
+  video.addEventListener('pause', () => {
+    playPauseBtn.innerHTML = '▶ Play';
+  });
+
+  // Take Snapshot
+  takeSnapshotBtn.addEventListener('click', () => {
+    video.pause();
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    snapshotPreview.style.display = 'block';
+    snapshotPreview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    showToast('📸 Snapshot captured!', 'success');
+  });
+
+  // Quality Slider Logic
+const qualitySlider = modal.querySelector('#qualitySlider');
+const qualityValue = modal.querySelector('#qualityValue');
+const estimatedSize = modal.querySelector('#estimatedSize');
+let currentQuality = 0.85;
+
+qualitySlider.addEventListener('input', (e) => {
+  currentQuality = e.target.value / 100;
+  qualityValue.textContent = `${e.target.value}%`;
+  
+  // Rough estimation of file size based on quality (canvas dimensions factor in)
+  const baseSize = (canvas.width * canvas.height * 3) / 1024; // rough KB
+  const compressedSize = baseSize * currentQuality * 0.3; // approximate compression
+  
+  if (compressedSize > 1024) {
+    estimatedSize.textContent = `~${(compressedSize / 1024).toFixed(1)} MB`;
+  } else {
+    estimatedSize.textContent = `~${Math.round(compressedSize)} KB`;
+  }
+});
+
+  // Download Snapshot
+  modal.querySelector('#downloadSnapshotBtn').addEventListener('click', () => {
+  canvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const timestamp = new Date().toISOString().replace(/\./g, '-').slice(0, -5);
+    a.href = url;
+    a.download = `video-snapshot-${timestamp}.webp`; // Changed to .webp
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast(`💾 Snapshot downloaded as WebP at ${Math.round(currentQuality * 100)}% quality!`, 'success');
+  }, 'image/webp', currentQuality); // Changed to image/webp
+});
+
+  // Copy to Clipboard
+  modal.querySelector('#copySnapshotBtn').addEventListener('click', async () => {
+  try {
+    canvas.toBlob(async (blob) => {
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob })
+      ]);
+      showToast('📋 Snapshot copied to clipboard as PNG!', 'success');
+    }, 'image/png'); // PNG is more compatible for clipboard
+  } catch (error) {
+    showToast('Clipboard not supported in this browser', 'error');
+  }
+});
+
+  // Close modal
+  modal.querySelector('#closeSnapshotModal').addEventListener('click', () => {
+    video.pause();
+    backdrop.remove();
+  });
+
+  backdrop.addEventListener('click', (e) => {
+    if (e.target === backdrop) {
+      video.pause();
+      backdrop.remove();
+    }
+  });
+
+  modal.addEventListener('click', (e) => e.stopPropagation());
+}
+
+// Helper time formatter
+function formatTime(seconds) {
+  if (isNaN(seconds)) return '00:00';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
 
 
   function init() {
