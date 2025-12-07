@@ -2,7 +2,7 @@
 // @name         Site Speed Analyzer Pro
 // @namespace    http://tampermonkey.net/
 // @description  Revolutionary performance analyzer with GTM deep inspection, multi-format compression, AI recommendations, keyboard shortcuts & settings
-// @version      5.5
+// @version      5.6
 // @author       Pratik Chabria
 // @match        *://*/*
 // @grant        GM_getValue
@@ -44,7 +44,7 @@
 // UPDATE CHECKER - Check GitHub for new versions
 // ============================================================================
 function checkForScriptUpdates() {
-  const currentVersion = '5.5'; // Match your @version
+  const currentVersion = '5.6'; // Match your @version
   const versionUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
   const downloadUrl = versionUrl;
 
@@ -4135,7 +4135,7 @@ function createToolbar() {
   const checkUpdatesBtn = toolbar.querySelector('#checkUpdatesBtn');
   if (checkUpdatesBtn) {
     checkUpdatesBtn.addEventListener('click', () => {
-      const currentVersion = '5.5'; // Match your @version
+      const currentVersion = '5.6'; // Match your @version
       const downloadUrl = 'https://github.com/lazyasspanda/Site-speed-scripts/raw/refs/heads/main/Site-Speed-Analyzer.user.js';
 
       // If button is in "Update Available" state, open download link
